@@ -22,10 +22,10 @@ param_space <- expand.grid(lac = lac,
                            )
 
 # Replicate each row of the parameter space 10 times
-rep_param_space <- param_space[rep(seq_len(nrow(param_space)), each = 10), ]
+rep_param_space <- param_space[rep(seq_len(nrow(param_space)), each = rep), ]
 
 # Add a column for the replicate number (1 to 10)
-rep_param_space$rep <- rep(1:10, times = nrow(param_space))
+rep_param_space$rep <- rep(1:rep, times = nrow(param_space))
 
 # Save
 write.csv(rep_param_space, "data/parameter_space.csv", row.names = FALSE)
