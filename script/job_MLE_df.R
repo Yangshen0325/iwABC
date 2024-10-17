@@ -4,8 +4,10 @@ library(iwABC)
 # Maximum-likelihood estimation
 
 # Read data
+
 parameter_space <- read.csv("~/iwABC/script/parameter_space.csv")
 iw_observations <- readRDS("~/iwABC/script/iw_observations.rds")
+
 # this data is from Shu's parameter setting but plus the initial K setting,
 # and it's only 1 replication for each parameter combination.
 
