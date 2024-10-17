@@ -1,4 +1,11 @@
-# Maximum-likelihood estimation
+#
+#' Maximum-likelihood estimation
+#'
+#' @param
+#'
+#' @return
+#' @author
+#' @export
 
 # Read data
 #iw_observations <- readRDS("data/iw_observations.rds")
@@ -22,18 +29,13 @@
 #     jitter = 0,
 #     num_cycles = 1)
 
-get_MLE <- function(the_sim) {
-
-  # Record seed for each estimation
-  seed_mle <-as.integer(Sys.time()) %% 1000000L * sample(1:10,1)
-  set.seed(seed_mle)
-  message("seed_mle: ", seed_mle)
+get_MLE <- function(the_sim, pars_use) {
 
   # Apply ML_IW function to the simulation
   MLE_pars <- DAISIE::DAISIE_ML_IW(
 
     datalist = the_sim,
-    initparsopt = c(0.55, 0.15, 110, 0.006, 0.55),
+    initparsopt = as.numeric(pars_use) + 0.00001,
     idparsopt = c(1, 2, 3, 4, 5),
     parsfix = NULL,
     idparsfix = NULL,

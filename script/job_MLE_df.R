@@ -4,14 +4,36 @@ library(iwABC)
 # Maximum-likelihood estimation
 
 # Read data
-iw_observations <- readRDS("script/iw_observations.rds")
+parameter_space <- read.csv("parameter_space.csv")
+iw_observations <- readRDS("iw_observations.rds")
+# this data is from Shu's parameter setting but plus the initial K setting,
+# and it's only 1 replication for each parameter combination.
 
-# Apply get_MLE to each sublist in iw_observations
-MLE_list <- lapply(iw_observations, get_MLE)
+# Initialise space
+MLE_allpars <- list()
+
+for (i in 1:nrow(parameter_space)) {
+  # Extract simulation output
+  the_sim <- iw_observations[[i]]
+
+  # Extract the initial parameters for simulation
+  pars_use <- parameter_space[i, ]
+
+  # Record seed for each estimation
+  seed_mle <-as.integer(Sys.time()) %% 1000000L * sample(1:10,1)
+  set.seed(seed_mle)
+  message("seed_mle: ", seed_mle)
+
+  message("initial pars used:", paste(pars_use, collapse = " "))
+
+  MLE_allpars[[i]] <- iwABC::get_MLE(the_sim = the_sim,
+                                     pars_use = pars_use)
+
+}
 
 # Convert the list of results into a data frame
-MLE_df <- do.call(rbind, lapply(results_list, as.data.frame))
+MLE_df <- do.call(rbind, lapply(MLE_allpars, as.data.frame))
 
 
 save(MLE_df,
-     file = "script/MLE_df.rds")
+     file = "MLE_df.rds")
