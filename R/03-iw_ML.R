@@ -1,7 +1,7 @@
 # Maximum-likelihood estimation
 
 # Read data
-iw_observations <- readRDS("data/iw_observations.rds")
+#iw_observations <- readRDS("data/iw_observations.rds")
 
 # Apply MLE
 # DAISIE_ML_IW <- function(
@@ -61,10 +61,10 @@ get_MLE <- function(the_sim) {
 }
 
 # Apply get_MLE to each sublist in iw_observations
-results_list <- lapply(iw_observations, get_MLE)
+#results_list <- lapply(iw_observations, get_MLE)
 
 # Convert the list of results into a data frame
-results_df <- do.call(rbind, lapply(results_list, as.data.frame))
+#results_df <- do.call(rbind, lapply(results_list, as.data.frame))
 
 
 
