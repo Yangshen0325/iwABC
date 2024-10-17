@@ -37,5 +37,5 @@ for (i in 1:nrow(parameter_space)) {
 MLE_df <- do.call(rbind, lapply(MLE_allpars, as.data.frame))
 
 
-save(MLE_df,
+saveRDS(MLE_df,
      file = "~/iwABC/script/MLE_df.rds")
