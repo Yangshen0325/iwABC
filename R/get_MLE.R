@@ -31,13 +31,14 @@
 get_MLE <- function(the_sim, pars_use) {
 
   # Apply ML_IW function to the simulation
-  MLE_pars <- DAISIE::DAISIE_ML_IW(
+  MLE_pars <- DAISIE_ML_IW(
 
     datalist = the_sim,
     initparsopt = as.numeric(pars_use[1:5]),
     idparsopt = c(1, 2, 3, 4, 5),
     parsfix = NULL,
     idparsfix = NULL,
+    optimmethod = "simplex",
     cond = 1
   )
 
