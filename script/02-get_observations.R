@@ -1,8 +1,9 @@
 # Get simulation outputs with IW model using DAISIE simulation framework
 
  rm(list=ls())
-# # Load the package
- library(DAISIE)
+# # Load the package,
+ # !!!!!!! make sure it's on develop branch
+devtools::load_all("/Users/yangshen/Downloads/phd_yang/pkgs/DAISIE")
 
 iw_DAISIE_sim <- function(parameters) {
   success <- FALSE  # Initialize a flag to check if the simulation succeeded
@@ -10,7 +11,7 @@ iw_DAISIE_sim <- function(parameters) {
   while (!success) {  # Keep trying until the simulation succeeds
     tryCatch({
       # Attempt to run the simulation
-      iw_sim <- DAISIE::DAISIE_sim_cr(
+      iw_sim <- DAISIE_sim_cr(
         time = 5,
         M = 1000,
         pars = as.numeric(c(parameters[1], parameters[2], parameters[3], parameters[4], parameters[5])),
