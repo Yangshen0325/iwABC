@@ -4,7 +4,7 @@
 #SBATCH --ntasks=1
 #SBATCH --job-name=MLE_df
 #SBATCH --output=logs/MLE_df-%j.log
-#SBATCH --mem=1GB
+#SBATCH --mem=30GB
 #SBATCH --partition=regular
 
 module load R-bundle-CRAN/2023.12-foss-2023a
