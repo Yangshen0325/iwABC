@@ -39,7 +39,10 @@ get_MLE <- function(the_sim, pars_use) {
     parsfix = NULL,
     idparsfix = NULL,
     optimmethod = "simplex",
-    cond = 1
+    cond = 1,
+    res = 200,
+    methode = 'odeint::runge_kutta_cash_karp54'
+
   )
 
   # Extract relevant outputs
