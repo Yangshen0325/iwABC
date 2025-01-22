@@ -3,10 +3,10 @@
 
 ABC_SMC_iw <- function(
     obs_data,
-    calc_ss_function <- calc_error_all,
+    calc_ss_function = calc_error_all,
     init_epsilon_values = init_epsilon,
-    prior_generating_function <- prior_gen,
-    prior_density_function <- prior_dens,
+    prior_generating_function = prior_gen,
+    prior_density_function = prior_dens,
     number_of_particles = number_of_particles,
     sigma = 0.05,
     stop_rate = 1e-3,
@@ -149,6 +149,7 @@ ABC_SMC_iw <- function(
     }
 
     ss_diff_list[[i]] <- ss_diff
+
     if (stoprate_reached == FALSE) {
       epsilon[i + 1, ] <- apply(ss_diff, 2, quantile, probs = 0.5)
     }
