@@ -5,13 +5,12 @@ rm(list = ls())
 ## Define the parameters
 lac <- c(0.4, 0.7)
 mu <- c(0, 0.3)
-K <- c(20, 200)
+K <- c(20, 100)
 gam <- c(0.003, 0.009)
 laa <- c(0.1, 1.0)
 
 ## Define replicates
 rep <- 1
-
 
 ## Create all combinations
 param_space <- expand.grid(lac = lac,
