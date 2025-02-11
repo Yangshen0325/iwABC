@@ -6,6 +6,7 @@
 ### cladogenetic species are classed as stac=2; immigrant classed as stac=4:
 
 # Get the number of clades through time
+#' @export
 end_ltt <- function(sim, brt) {
 
   stac <- unlist(lapply(sim[-1],"[[", "stac"))

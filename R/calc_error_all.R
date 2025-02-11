@@ -8,6 +8,7 @@
 #' The largest clade size difference: `largest_cs_diff`
 #' The first clade size difference: `first_cs_diff`
 #' The proportion of the largest clades difference: `prop_largest_clade_diff`
+#' @export
 
 calc_error_all <- function(sim_1,
                            sim_2,

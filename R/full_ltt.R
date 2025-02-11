@@ -1,4 +1,5 @@
 # Get the full stt
+#' @export
 full_ltt <- function (sim, brt) {
 
   recolon <-lapply(sim,"[[", "all_colonisations")

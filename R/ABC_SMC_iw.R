@@ -1,3 +1,5 @@
+#' ABC_SMC_iw
+#' @export
 
 # ABC approach to estimate parameters in IW.
 
