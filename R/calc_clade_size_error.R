@@ -25,3 +25,36 @@ calc_clade_size_error <- function(sim_1, sim_2){
   clade_size_error <- abs(sim1_cs_sd - sim2_cs_sd)
   return(clade_size_error)
 }
+
+
+
+
+# Get the size of largest clade
+largest_clade_size <- function(sim){
+  clade_size <- c()
+  if (length(sim) == 1) {
+    largest_clade_size <- 0
+  } else {
+    for(i in 2:length(sim)){ ##clades
+      clade_size[i - 1] <- length(sim[[i]]$branching_times) - 1
+    }
+    largest_clade_size <- max(clade_size)
+  }
+
+  return(largest_clade_size)
+}
+
+
+
+# Get the fist clade size
+first_clade_size <- function(sim){
+  clade_size <- c()
+  if (length(sim) == 1) {
+    first_clade_size <- 0
+  } else {
+    first_clade_size <- length(sim[[2]]$branching_times) - 1
+    }
+
+  return(first_clade_size)
+}
+
