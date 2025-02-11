@@ -4,7 +4,8 @@
 # lac, mu, k, gam,  laa
 # 0.4, 0, 20, 0.003, 0.1
 
-the_path <- "~/Downloads/phd_yang/pkgs/iwABC/script/"
+# the_path <- "~/Downloads/phd_yang/pkgs/iwABC/script/"
+the_path <- "~/iwABC/script/"
 iw_observations <- readRDS(paste0(the_path, "iw_observations.rds"))
 obs_sim <- iw_observations[[1]]
 
