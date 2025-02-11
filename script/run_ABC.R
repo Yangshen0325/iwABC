@@ -3,6 +3,7 @@
 # pars that generate the obeservation:
 # lac, mu, k, gam,  laa
 # 0.4, 0, 20, 0.003, 0.1
+library(iwABC)
 
 # the_path <- "~/Downloads/phd_yang/pkgs/iwABC/script/"
 the_path <- "~/iwABC/script/"
