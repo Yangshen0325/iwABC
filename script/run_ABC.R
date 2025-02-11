@@ -12,7 +12,7 @@ obs_sim <- iw_observations[[1]]
 parameters <- c(0.4, 0, 20, 0.003, 0.1)
 
 # initial epsilon values
-init_epsilon <- c(150, 50, 50, 20, 20, 150, 50, 50)
+init_epsilon <- c(25, 47, 3, 46, 45, 82, 265, 45, 118, 1.0, 152, 45, 91, 293)
 
 # number if iteration
 num_iterations <- 20
