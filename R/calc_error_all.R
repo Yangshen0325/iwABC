@@ -140,8 +140,8 @@ calc_error_all <- function(sim_1,
 
   # No.Colonization event difference ------------------------------------------------------
 
-  num_colon_1 <- M - sim_1[[1]][["not_present"]]
-  num_colon_2 <- M - sim_2[[1]][["not_present"]]
+  num_colon_1 <- 1000 - sim_1[[1]][["not_present"]]
+  num_colon_2 <- 1000 - sim_2[[1]][["not_present"]]
   num_colon <- abs(num_colon_1 - num_colon_2)
 
 
