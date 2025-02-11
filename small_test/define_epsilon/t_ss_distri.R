@@ -5,7 +5,7 @@
 # function to get ss_differ -----------------------------------------------
 
 # return `ss_diff_list` for checking the distribution of summary statistics difference,
-# define=ing the epsilon
+# defining the epsilon
 
 t_ABC_SMC_ss_distri <- function(
     obs_data,
@@ -38,6 +38,9 @@ t_ABC_SMC_ss_distri <- function(
   ABC_list <- list()
   sim_list <- list()
   ss_diff_list <- list()
+
+  # mainland species pool
+  M <- 1000
 
   #convergence is expected within 50 iterations
   #usually convergence occurs within 20 iterations
@@ -90,7 +93,7 @@ t_ABC_SMC_ss_distri <- function(
         #simulate a new tree, given the proposed parameters
         new_sim <- DAISIE::DAISIE_sim_cr(
           time = 5,
-          M = 1000,
+          M = M,
           pars = as.numeric(c(parameters[1], parameters[2], parameters[3], parameters[4], parameters[5])),
           replicates = 1,
           divdepmodel = "IW",
@@ -188,13 +191,15 @@ rm(list = ls())
 iw_observations <- readRDS("script/iw_observations.rds")
 
 # read parameters generating empirical data
-parameter_space <- read_csv("script/parameter_space.csv")
+parameter_space <- read.csv("script/parameter_space.csv")
 
 # number if iteration
 num_iterations <- 1
 
 # number of particles
 number_of_particles <- 500
+
+M <- 1000
 
 # initialize the results
 t_ss_distri <- list()
@@ -234,8 +239,12 @@ ss_diff_list <- lapply(t_ss_distri, function(x) x$ss_diff_list[[1]])
 
  # set column names
 column_names <- c(
-  "diff_total_nltt", "diff_singleton_nltt", "diff_nonend_nltt",
-  "diff_colon_time", "diff_clade_size", "diff_total", "diff_end", "diff_noend"
+  "diff_total_nltt", "diff_singleton_nltt", "diff_multi_nltt", "diff_nonend_nltt",
+  "diff_colon_time", "diff_clade_size",
+  "diff_total", "diff_sington", "diff_multi", "diff_noend",
+  "diff_colon",
+  "diff_largest_cs", "diff_first_cs",
+  "diff_prop_largest_clade"
 )
 ss_diff_table <- lapply(ss_diff_list, function(mat) {
   colnames(mat) <- column_names
@@ -254,7 +263,7 @@ combined_data <- do.call(rbind, lapply(seq_along(ss_diff_table), function(i) {
 
 
 # Plotting
-library(ggplot2)
+library(tidyverse)
 
 # longer data
 long_data <- combined_data  |>
@@ -282,9 +291,11 @@ plot_box <- function(data, title) {
 
 # group summary statistics for plotting
 groups <- list(
-  group1 = c("diff_total_nltt", "diff_singleton_nltt", "diff_nonend_nltt"),
-  group2 = c("diff_colon_time", "diff_clade_size"),
-  group3 = c("diff_total", "diff_end", "diff_noend")
+  group1 = c("diff_total_nltt", "diff_singleton_nltt", "diff_multi_nltt", "diff_nonend_nltt"),
+  group2 = c("diff_colon_time", "diff_clade_size", "diff_colon"),
+  group3 = c("diff_total", "diff_songton", "diff_multi", "diff_noend"),
+  group4 = c("diff_largest_cs", "diff_first_cs", "diff_prop_largest_clade")
+
 )
 
 # box plot
@@ -298,6 +309,7 @@ for (group_name in names(groups)) {
 
   # Create box plot
   box_plot <- plot_box(group_data, paste("Box Plot for", group_name))
+  print(box_plot)
 
 }
 
@@ -307,10 +319,29 @@ summary_stats <- long_data  |>
   group_by(Statistic)  |>
   summarize(
     median = median(Difference),
-    Percentile_95 = quantile(Difference, probs = 0.95)
+    Percentile_95 = quantile(Difference, probs = 0.95),
+    max_val = max(Difference)
   )
 
 print(summary_stats)
+
+# A tibble: 14 × 4
+# Statistic               median Percentile_95 max_val
+# <chr>                    <dbl>         <dbl>   <dbl>
+#   1 diff_clade_size          1.13          3.63   24.6
+# 2 diff_colon               8            24      47
+# 3 diff_colon_time          0.299         1.18    2.43
+# 4 diff_first_cs            2            10      46
+# 5 diff_largest_cs          4            13      45
+# 6 diff_multi              14            56      82
+# 7 diff_multi_nltt         34.0         133.    265.
+# 8 diff_noend               3             9      45
+# 9 diff_nonend_nltt         4.53         22.4   118.
+# 10 diff_prop_largest_clade  0.124         0.538   0.898
+# 11 diff_singleton_nltt     12.7          47.1   152.
+# 12 diff_sington             4            16      45
+# 13 diff_total              17            59      91
+# 14 diff_total_nltt         42.0         145.    293.
 
 # If you want to plot density plot (too many lines, not recommended) --------
 
