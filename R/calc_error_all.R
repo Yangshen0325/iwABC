@@ -1,6 +1,4 @@
-
-
-#' Calculate summary statistic distances between two simulated trees
+#' Calculate summary statistic distances between two simulated trees when using all statistics
 #' Diversity difference: `num_nonend`, `num_sington`, `num_multi`, `num_total`
 #' Phylogenetic difference: `clade_size`, `colon_time`
 #' NLTT difference:`total_nltt`, `nonend_nltt`, `singleton_nltt`, `multi_nltt`
@@ -8,8 +6,10 @@
 #' The largest clade size difference: `largest_cs_diff`
 #' The first clade size difference: `first_cs_diff`
 #' The proportion of the largest clades difference: `prop_largest_clade_diff`
+#'
+#' @return A vector with all error metrics:
 #' @export
-
+#'
 calc_error_all <- function(sim_1,
                            sim_2,
                            replicates = 1,
