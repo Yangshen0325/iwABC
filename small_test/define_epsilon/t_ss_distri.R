@@ -64,10 +64,10 @@ get_ss_diff <- function(
 # Distribution of difference across different combinations of parameters --------
 
 # read empirical data, 2^5 combinations of parameters, each with 10 reps, so 320 lists
-iw_observations <- readRDS("data/iw_observations.rds")
+iw_observations <- readRDS("～/iwABC/data/iw_observations.rds")
 
 # read parameters generating empirical data, correponding 320 observations
-parameter_space <- read.csv("data/parameter_space.csv")
+parameter_space <- read.csv("～/iwABC/data/parameter_space.csv")
 
 # initialize the results
 ss_diff_list <- list()
