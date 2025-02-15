@@ -6,6 +6,7 @@
 # Check out the distribution of differences of summary statistics, then define epsilon
 
 rm(list = ls())
+library(iwABC)
 # function to get ss_diff -----------------------------------------------
 
 # return `ss_diff` for only one particle (a set of parameters), but run 500 times to get 500 differences
