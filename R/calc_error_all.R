@@ -1,11 +1,8 @@
 #' Calculate summary statistic distances between two simulated trees when using all statistics
-#' Diversity difference: `num_nonend`, `num_sington`, `num_multi`, `num_total`
-#' Phylogenetic difference: `clade_size`, `colon_time`
-#' NLTT difference:`total_nltt`, `nonend_nltt`, `singleton_nltt`, `multi_nltt`
-#' Number of colonization events difference: `num_colon`
-#' The largest clade size difference: `largest_cs_diff`
-#' The first clade size difference: `first_cs_diff`
-#' The proportion of the largest clades difference: `prop_largest_clade_diff`
+#' Diversity difference: `num_nonend`, `num_sington`, `num_multi`
+#' NLTT difference: `nonend_nltt`, `singleton_nltt`, `multi_nltt`
+#' Clade size difference: `sd_clade_size`, `largest_cs_diff`, `first_cs_diff`, `prop_largest_clade_diff`
+#' Colonisation difference: `sd_colon_time`, `num_colon`
 #'
 #' @return A vector with all error metrics:
 #' @export
@@ -39,27 +36,10 @@ calc_error_all <- function(sim_1,
   num_multi <-
     abs(num_multi_sim_1 - num_multi_sim_2)
 
-  num_total_sim_1 <- num_sington_sim_1 + num_multi_sim_1 + num_nonend_sim_1
-  num_total_sim_2 <- num_sington_sim_2 + num_multi_sim_2 + num_nonend_sim_2
-  num_total <- abs(num_total_sim_1 - num_total_sim_2)
-
-  # Phylogenetic difference ---------------------------------------------------------
-
-  # standard deviation of clade size error
-  clade_size <- calc_clade_size_error(sim_1, sim_2)
-
-  # standard deviation of colonization time
-  colon_time <- calc_colon_time_error(sim_1, sim_2)
-
-
-
-
-
-
-
-
-
-
+  # delete this to save time, more accuracy with this, maybe more rejected particles though.
+  # num_total_sim_1 <- num_sington_sim_1 + num_multi_sim_1 + num_nonend_sim_1
+  # num_total_sim_2 <- num_sington_sim_2 + num_multi_sim_2 + num_nonend_sim_2
+  # num_total <- abs(num_total_sim_1 - num_total_sim_2)
 
   # NLTT difference -------------------------------------------------------
 
@@ -70,16 +50,17 @@ calc_error_all <- function(sim_1,
   ltt_1 <- full_ltt(sim_1, brt1)
   ltt_2 <- full_ltt(sim_2, brt2)
 
+  # Delete this to save time
   # total number species nltt error
-  total_nltt <- nLTT::nltt_diff_exact_extinct(
-    event_times = ltt_1$brt,
-    species_number = ltt_1$n_spec,
-    event_times2 = ltt_2$brt,
-    species_number2 = ltt_2$n_spec,
-    distance_method = distance_method,
-    time_unit = "ago",
-    normalize = FALSE
-  )
+  # total_nltt <- nLTT::nltt_diff_exact_extinct(
+  #   event_times = ltt_1$brt,
+  #   species_number = ltt_1$n_spec,
+  #   event_times2 = ltt_2$brt,
+  #   species_number2 = ltt_2$n_spec,
+  #   distance_method = distance_method,
+  #   time_unit = "ago",
+  #   normalize = FALSE
+  # )
 
   ## nonendemic_nltt and singleton-endemic-nltt and multi-endemic-nltt
   end_ltt_1 <- end_ltt(sim_1, brt1)
@@ -138,60 +119,57 @@ calc_error_all <- function(sim_1,
   }
 
 
-  # No.Colonization event difference ------------------------------------------------------
+  # Clade size difference ---------------------------------------------------------
 
-  num_colon_1 <- 1000 - sim_1[[1]][["not_present"]]
-  num_colon_2 <- 1000 - sim_2[[1]][["not_present"]]
-  num_colon <- abs(num_colon_1 - num_colon_2)
+  # standard deviation of clade size error
+  sd_clade_size <- calc_clade_size_error(sim_1, sim_2)
 
-
-
-
-
-
-
-
-
-
-
-
-
-  # the largest clade size difference ---------------------------------------
+  # the largest clade size difference
   largest_clade_size_1 <- largest_clade_size(sim_1)
   largest_clade_size_2 <- largest_clade_size(sim_2)
   largest_cs_diff <- abs(largest_clade_size_1 - largest_clade_size_2)
 
+  # the first clade size difference
+  first_clade_size_1 <- first_clade_size(sim_1)
+  first_clade_size_2 <- first_clade_size(sim_2)
+  first_cs_diff <- abs(first_clade_size_1 - first_clade_size_2)
 
-  # proportion of the largest clades ----------------------------------------
+  # proportion of the largest clades
   prop_largest_clade_1 <- largest_clade_size_1 / num_total_sim_1
   prop_largest_clade_2 <- largest_clade_size_2 / num_total_sim_2
   prop_largest_clade_diff <- abs(prop_largest_clade_1 - prop_largest_clade_2)
 
 
 
-  # the first clade size ----------------------------------------------------
-  first_clade_size_1 <- first_clade_size(sim_1)
-  first_clade_size_2 <- first_clade_size(sim_2)
-  first_cs_diff <- abs(first_clade_size_1 - first_clade_size_2)
+  # Colonisation difference  -------------------
+
+  # standard deviation of colonization time
+  sd_colon_time <- calc_colon_time_error(sim_1, sim_2)
+
+  # number of colonization events
+  num_colon_1 <- 1000 - sim_1[[1]][["not_present"]]
+  num_colon_2 <- 1000 - sim_2[[1]][["not_present"]]
+  num_colon <- abs(num_colon_1 - num_colon_2)
 
 
   # All errors --------------------------------------------------------------
   return(
-    c(
-      total_nltt,
-      singleton_nltt,
-      multi_nltt,
-      nonend_nltt,
-      colon_time,
-      clade_size,
-      num_total,
+    c(num_nonend,
       num_sington,
       num_multi,
-      num_nonend,
-      num_colon,
+
+      nonend_nltt,
+      singleton_nltt,
+      multi_nltt,
+
+      sd_clade_size,
       largest_cs_diff,
       first_cs_diff,
-      prop_largest_clade_diff
+      prop_largest_clade_diff,
+
+      sd_colon_time,
+      num_colon,
+
     )
   )
 }
