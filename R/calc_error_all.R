@@ -135,6 +135,8 @@ calc_error_all <- function(sim_1,
   first_cs_diff <- abs(first_clade_size_1 - first_clade_size_2)
 
   # proportion of the largest clades
+  num_total_sim_1 <- num_sington_sim_1 + num_multi_sim_1 + num_nonend_sim_1
+  num_total_sim_2 <- num_sington_sim_2 + num_multi_sim_2 + num_nonend_sim_2
   prop_largest_clade_1 <- largest_clade_size_1 / num_total_sim_1
   prop_largest_clade_2 <- largest_clade_size_2 / num_total_sim_2
   prop_largest_clade_diff <- abs(prop_largest_clade_1 - prop_largest_clade_2)
@@ -168,7 +170,7 @@ calc_error_all <- function(sim_1,
       prop_largest_clade_diff,
 
       sd_colon_time,
-      num_colon,
+      num_colon
 
     )
   )
