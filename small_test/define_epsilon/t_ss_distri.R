@@ -80,9 +80,9 @@ for (i in seq_along(iw_observations)){
 
   # calculate the differences of summary statistics
   ss_diff_list[[i]] <- get_ss_diff(obs_data = obs_sim,
-                                           calc_ss_function <- calc_ss_iw,
-                                           prior_generating_function <- prior_gen,
-                                           prior_density_function <- prior_dens,
+                                           calc_ss_function = calc_ss_iw,
+                                           prior_generating_function = prior_gen,
+                                           prior_density_function = prior_dens,
                                            number_of_particles = 500,
                                            idparsopt = c(1, 2, 3, 4, 5),
                                            pars = the_par,
