@@ -1,56 +1,76 @@
-#' ABC_SMC_iw
-#' @export
+#' ABC approach to estimate parameters in IW.
+#'
+#' @param obs_data A list of simulation output as observation.
+#' @param calc_ss_function A function to calculate summary statistic distance
+#'  between simulated and observed data.
+#' @param init_epsilon_values A vector of initial epsilon values.
+#' @param prior_generating_function Function to generate parameters from the
+#'  prior distribution.
+#' @param prior_density_function Function to calculate the prior probability.
+#' @param number_of_particles The number of particles in each iteration.
+#' @param sigma Standard deviation of the perturbation distribution.
+#' @param stop_rate A numeric value which is the boundary to stop the algorithm.
+#' @param num_iterations The maximum number of iterations.
+#' @param idparsopt The id of the parameters that need to be inferred, the others
+#'  are fixed.
+#' @param ss_set A numeric indicates which set of summary statistics that
+#'  are used to calculate the distance.
 
-# ABC approach to estimate parameters in IW.
 
 ABC_SMC_iw <- function(
     obs_data,
-    calc_ss_function = calc_error_all,
-    init_epsilon_values = init_epsilon,
-    prior_generating_function = prior_gen,
-    prior_density_function = prior_dens,
-    number_of_particles = number_of_particles,
-    sigma = 0.05,
-    stop_rate = 1e-3,
-    num_iterations = num_iterations,
-    idparsopt = c(1, 2, 3, 4, 5),
-    pars = parameters
+    calc_ss_function,
+    init_epsilon_values,
+    prior_generating_function,
+    prior_density_function,
+    number_of_particles,
+    sigma,
+    stop_rate,
+    num_iterations,
+    idparsopt,
+    pars
     #ss_set
 ) {
 
-  obs_data <- obs_sim
-  #generate a matrix with epsilon values
-  #we assume that the SMC algorithm converges within 50 iterations
+  # Generate a matrix with epsilon values
   epsilon <- matrix(nrow = 20, ncol = length(init_epsilon_values))
   epsilon[1, ] <- init_epsilon_values
 
-  #store weights
+  # Store weights
   new_weights <- c()
   new_params <- list(c(seq_along(pars)))
   previous_weights <- c()
   previous_params  <- list(c(seq_along(pars)))
+
   indices <- 1:number_of_particles
+
   n_iter <- 0
+
+  # Initialize the output lists
   ABC_list <- list()
   sim_list <- list()
   ss_diff_list <- list()
 
-  #convergence is expected within 50 iterations
-  #usually convergence occurs within 20 iterations
+  # Iterate through the number of iterations
   for (i in 1:num_iterations) {
+
     ss_diff <- c()
+
     n_iter <- n_iter + 1
+
     cat("\nGenerating Particles for iteration\t", i, "\n")
     cat("0--------25--------50--------75--------100\n")
     cat("*")
     utils::flush.console()
-
     print_frequency <- 20
+
     tried <- 0
+
     number_accepted <- 0
+
     sigma_temp <- sigma * exp(-0.2 * (i - 1))
 
-    #replace all vectors
+    # Replace all vectors
     if (i > 1) {
       #normalize the weights and store them as previous weights.
       previous_weights <- new_weights / sum(new_weights)
@@ -60,10 +80,10 @@ ABC_SMC_iw <- function(
     }
 
     stoprate_reached <- FALSE
-    # ss_logic <- c()
 
     while (number_accepted < number_of_particles) {
-      #in this initial step, generate parameters from the prior
+
+      # In this initial step, generate parameters from the prior
       if (i == 1) {
         parameters <- prior_generating_function(pars, idparsopt)
       } else {
@@ -80,10 +100,10 @@ ABC_SMC_iw <- function(
                                                     0, sigma_temp))
       }
 
-      #reject if outside the prior
+      # Reject if outside the prior
       if (prior_density_function(pars, idparsopt) > 0) {
 
-        #simulate a new tree, given the proposed parameters
+        # Simulate a new tree, given the proposed parameters. Using DAISIE IW model!!!
         new_sim <- DAISIE::DAISIE_sim_cr(
           time = 5,
           M = 1000,
@@ -99,7 +119,7 @@ ABC_SMC_iw <- function(
 
         accept <- TRUE
 
-        #calculate the summary statistics for the simulated tree
+        # Calculate the summary statistics for the simulated tree
         if (accept) {
           df_stats <- calc_ss_function(sim_1 = obs_data,
                                        sim_2 = new_sim[[1]])
