@@ -2,22 +2,49 @@
 % Please edit documentation in R/ABC_SMC_iw.R
 \name{ABC_SMC_iw}
 \alias{ABC_SMC_iw}
-\title{ABC_SMC_iw}
+\title{ABC approach to estimate parameters in IW.}
 \usage{
 ABC_SMC_iw(
   obs_data,
-  calc_ss_function = calc_error_all,
-  init_epsilon_values = init_epsilon,
-  prior_generating_function = prior_gen,
-  prior_density_function = prior_dens,
-  number_of_particles = number_of_particles,
-  sigma = 0.05,
-  stop_rate = 0.001,
-  num_iterations = num_iterations,
-  idparsopt = c(1, 2, 3, 4, 5),
-  pars = parameters
+  calc_ss_function,
+  init_epsilon_values,
+  prior_generating_function,
+  prior_density_function,
+  number_of_particles,
+  sigma,
+  stop_rate,
+  num_iterations,
+  idparsopt,
+  pars
 )
 }
+\arguments{
+\item{obs_data}{A list of simulation output as observation.}
+
+\item{calc_ss_function}{A function to calculate summary statistic distance
+between simulated and observed data.}
+
+\item{init_epsilon_values}{A vector of initial epsilon values.}
+
+\item{prior_generating_function}{Function to generate parameters from the
+prior distribution.}
+
+\item{prior_density_function}{Function to calculate the prior probability.}
+
+\item{number_of_particles}{The number of particles in each iteration.}
+
+\item{sigma}{Standard deviation of the perturbation distribution.}
+
+\item{stop_rate}{A numeric value which is the boundary to stop the algorithm.}
+
+\item{num_iterations}{The maximum number of iterations.}
+
+\item{idparsopt}{The id of the parameters that need to be inferred, the others
+are fixed.}
+
+\item{ss_set}{A numeric indicates which set of summary statistics that
+are used to calculate the distance.}
+}
 \description{
-ABC_SMC_iw
+ABC approach to estimate parameters in IW.
 }

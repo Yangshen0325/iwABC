@@ -2,7 +2,7 @@
 % Please edit documentation in R/calc_error_all.R
 \name{calc_error_all}
 \alias{calc_error_all}
-\title{Calculate summary statistic distances between two simulated trees
+\title{Calculate summary statistic distances between two simulated trees when using all statistics
 Diversity difference: \code{num_nonend}, \code{num_sington}, \code{num_multi}, \code{num_total}
 Phylogenetic difference: \code{clade_size}, \code{colon_time}
 NLTT difference:\code{total_nltt}, \code{nonend_nltt}, \code{singleton_nltt}, \code{multi_nltt}
@@ -13,8 +13,11 @@ The proportion of the largest clades difference: \code{prop_largest_clade_diff}}
 \usage{
 calc_error_all(sim_1, sim_2, replicates = 1, distance_method = "abs")
 }
+\value{
+A vector with all error metrics:
+}
 \description{
-Calculate summary statistic distances between two simulated trees
+Calculate summary statistic distances between two simulated trees when using all statistics
 Diversity difference: \code{num_nonend}, \code{num_sington}, \code{num_multi}, \code{num_total}
 Phylogenetic difference: \code{clade_size}, \code{colon_time}
 NLTT difference:\code{total_nltt}, \code{nonend_nltt}, \code{singleton_nltt}, \code{multi_nltt}
