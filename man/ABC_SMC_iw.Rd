@@ -11,11 +11,13 @@ ABC_SMC_iw(
   prior_generating_function,
   prior_density_function,
   number_of_particles,
+  print_frequency,
   sigma,
   stop_rate,
   num_iterations,
   idparsopt,
-  pars
+  pars,
+  ss_set
 )
 }
 \arguments{
