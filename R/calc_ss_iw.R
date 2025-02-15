@@ -9,6 +9,7 @@
 
 
 calc_ss_iw <- function(sim1, sim2, ss_set){
+
   if (ss_set == 0){ # all
     ss <- calc_error_all(sim_1 = sim1,
                          sim_2 = sim2)
@@ -26,3 +27,4 @@ calc_ss_iw <- function(sim1, sim2, ss_set){
 
   return(ss_diff)
 }
+#### except for ss_set = 0, the other functions are not implemented yet.
