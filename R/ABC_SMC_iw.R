@@ -24,19 +24,20 @@ ABC_SMC_iw <- function(
     prior_generating_function,
     prior_density_function,
     number_of_particles,
+    print_frequency,
     sigma,
     stop_rate,
     num_iterations,
     idparsopt,
-    pars
-    #ss_set
+    pars,
+    ss_set
 ) {
 
   # Generate a matrix with epsilon values
   epsilon <- matrix(nrow = 20, ncol = length(init_epsilon_values))
   epsilon[1, ] <- init_epsilon_values
 
-  # Store weights
+  # Initialise weights
   new_weights <- c()
   new_params <- list(c(seq_along(pars)))
   previous_weights <- c()
@@ -62,7 +63,8 @@ ABC_SMC_iw <- function(
     cat("0--------25--------50--------75--------100\n")
     cat("*")
     utils::flush.console()
-    print_frequency <- 20
+
+    print_frequency <- print_frequency
 
     tried <- 0
 
@@ -70,13 +72,13 @@ ABC_SMC_iw <- function(
 
     sigma_temp <- sigma * exp(-0.2 * (i - 1))
 
-    # Replace all vectors
+    # Reset `new_weight` and `new_params`
     if (i > 1) {
       #normalize the weights and store them as previous weights.
       previous_weights <- new_weights / sum(new_weights)
       new_weights <- c() #remove all currently stored weights
       previous_params <- new_params #store found params
-      new_params <- list(c(seq_along(parameters))) #clear new params
+      new_params <- list(c(seq_along(pars))) #clear new params
     }
 
     stoprate_reached <- FALSE
@@ -85,18 +87,22 @@ ABC_SMC_iw <- function(
 
       # In this initial step, generate parameters from the prior
       if (i == 1) {
-        parameters <- prior_generating_function(pars, idparsopt)
+        parameters <- prior_generating_function(pars = pars,
+                                                idparsopt = idpardopt)
       } else {
         #if not in the initial step, generate parameters
         #from the weighted previous distribution:
+
+        # Sample an index from the previous weights, and use the corresponding parameters as a baseline
         index <- sample(x = indices, size = 1,
                         replace = TRUE, prob = previous_weights)
-
         for (p_index in seq_along(parameters)) {
           parameters[p_index] <- previous_params[[index]][p_index]
         }
+
+        # Perturb the parameters
         parameters[idparsopt] <- exp(log(parameters[idparsopt]) +
-                                       stats::rnorm(length(idparsopt),
+                                       stats::rnorm(length(idparsopt), # add random noise
                                                     0, sigma_temp))
       }
 
@@ -121,10 +127,11 @@ ABC_SMC_iw <- function(
 
         # Calculate the summary statistics for the simulated tree
         if (accept) {
-          df_stats <- calc_ss_function(sim_1 = obs_data,
-                                       sim_2 = new_sim[[1]])
+          df_stats <- calc_ss_function(sim1 = obs_data,
+                                       sim2 = new_sim[[1]],
+                                       ss_set = ss_set)
 
-          # #check if the summary statistics are sufficiently
+          # Check if the summary statistics meet the criteria, yes-accept, any of them is larger than epsilon-reject
           for (k in seq_along(df_stats)) {
             if (as.numeric(df_stats[k]) > epsilon[i, k]) {
               accept <- FALSE
@@ -133,13 +140,21 @@ ABC_SMC_iw <- function(
         }
 
         if (accept) {
+          # Update the number of accepted particles
           number_accepted <- number_accepted + 1
-          new_params[[number_accepted]] <- parameters
-          sim_list[[number_accepted]] <- new_sim[[1]]
-          accepted_weight <- 1
-          ss_diff <- rbind(ss_diff,df_stats)
 
-          #calculate the weight
+          # Store the accepted particles
+          new_params[[number_accepted]] <- parameters
+
+          # Store the accepted simulations
+          sim_list[[number_accepted]] <- new_sim[[1]]
+
+          accepted_weight <- 1
+
+          # Store the difference of summary statistics
+          ss_diff <- rbind(ss_diff, df_stats)
+
+          # Calculate the weight
           if (i > 1) {
             accepted_weight <- calc_weight(previous_weights,
                                            previous_params,
@@ -151,6 +166,7 @@ ABC_SMC_iw <- function(
 
           new_weights[number_accepted] <- accepted_weight
 
+          # Print(**) out every certain number of particles, showing the progress on screen
           if ((number_accepted) %%
               (number_of_particles / print_frequency) == 0) {
             cat("**")
@@ -159,9 +175,9 @@ ABC_SMC_iw <- function(
         }
       }
 
-      #convergence if the acceptance rate gets too low
+      # If the stopping condition is met, the loop exits early using `break`
       tried <- tried + 1
-      if (tried > (1 / stop_rate) & n_iter > 4) {
+      if (tried > (1 / stop_rate) & n_iter > 4) {# it checks only after least 5 iterations
 
         if ((number_accepted / tried) < stop_rate) {
           stoprate_reached <- TRUE
@@ -184,12 +200,14 @@ ABC_SMC_iw <- function(
       }
       ABC <- rbind(ABC, add)
     }
+
     ABC_list[[i]] <- ABC
 
     if (stoprate_reached) {
       break
     }
   }
+
   message("tried times: ", tried)
 
   output <- list(sim_list = sim_list,
