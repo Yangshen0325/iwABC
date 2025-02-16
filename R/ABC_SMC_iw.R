@@ -15,6 +15,7 @@
 #'  are fixed.
 #' @param ss_set A numeric indicates which set of summary statistics that
 #'  are used to calculate the distance.
+#'  @export
 
 
 ABC_SMC_iw <- function(
@@ -88,7 +89,7 @@ ABC_SMC_iw <- function(
       # In this initial step, generate parameters from the prior
       if (i == 1) {
         parameters <- prior_generating_function(pars = pars,
-                                                idparsopt = idpardopt)
+                                                idparsopt = idparsopt)
       } else {
         #if not in the initial step, generate parameters
         #from the weighted previous distribution:
