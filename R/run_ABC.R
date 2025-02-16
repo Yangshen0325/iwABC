@@ -10,8 +10,8 @@
 #' @export
 
 # Read data
-param_space <- read.csv("~/iwABC/data/parameter_space.csv")
-iw_observations <- readRDS("~/iwABC/data/iw_observations.rds")
+param_space <- read.csv("data/parameter_space.csv")
+iw_observations <- readRDS("data/iw_observations.rds")
 
 
 run_ABC <- function(param_set,
