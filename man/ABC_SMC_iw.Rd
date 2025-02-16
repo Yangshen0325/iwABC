@@ -45,7 +45,8 @@ prior distribution.}
 are fixed.}
 
 \item{ss_set}{A numeric indicates which set of summary statistics that
-are used to calculate the distance.}
+are used to calculate the distance.
+@export}
 }
 \description{
 ABC approach to estimate parameters in IW.
