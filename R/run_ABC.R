@@ -17,9 +17,9 @@ iw_observations <- readRDS("data/iw_observations.rds")
 run_ABC <- function(param_set,
                     idparsopt,
                     ss_set = 0,
-                    number_of_particles = 500,
-                    num_iterations = 20,
-                    print_frequency = 20,
+                    number_of_particles = 2,
+                    num_iterations = 2,
+                    print_frequency = 1,
                     sigma = 0.05,
                     stop_rate = 1e-3,
                     saveOrNot = TRUE){
