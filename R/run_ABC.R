@@ -9,6 +9,7 @@
 #' @param stop_rate The stopping rate of the ABC-SMC algorithm (the process should stop if the success rate falls below it)
 #' @export
 
+
 # Read data
 param_space <- read.csv("data/parameter_space.csv")
 iw_observations <- readRDS("data/iw_observations.rds")
