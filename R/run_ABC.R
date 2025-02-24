@@ -58,10 +58,10 @@ run_ABC <- function(param_set,
                     ss_set = ss_set)
 
   if(saveOrNot == TRUE){
-    save_
-    output(output = abc,
+    save_output(output = abc,
                 param_set = param_set,
                 ss_set = ss_set)
+
   }else{
     return(abc)
   }
