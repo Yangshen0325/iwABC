@@ -19,7 +19,7 @@ metadata <- paste0("This is parameter set ", param_set)
 
 library(iwABC)
 
-run_ABC(
+iwABC::run_ABC(
   param_set = as.numeric(args[1]),
   idparsopt = as.numeric(idparsopt),
   saveOrNot = saveOrNot,
