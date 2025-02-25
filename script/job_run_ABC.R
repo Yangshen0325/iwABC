@@ -17,11 +17,12 @@ saveOrNot <- TRUE
 metadata <- paste0("This is parameter set ", param_set)
 
 
+
 library(iwABC)
 
 iwABC::run_ABC(
   param_set = as.numeric(args[1]),
   idparsopt = as.numeric(idparsopt),
   saveOrNot = saveOrNot,
-  ss_set = ss_set
+  ss_set = 0
 )
