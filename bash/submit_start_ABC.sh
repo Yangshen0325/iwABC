@@ -4,7 +4,7 @@
 #SBATCH --ntasks=1
 #SBATCH --job-name=start_ABC
 #SBATCH --output=logs/start_ABC.log
-#SBATCH --mem=5GB
+#SBATCH --mem=1GB
 #SBATCH --partition=regular
 
 idparsopt_lac=${1}
