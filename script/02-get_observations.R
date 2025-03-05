@@ -40,7 +40,7 @@ iw_DAISIE_sim <- function(parameters) {
 }
 
 # # Read data
- parameter_space <- read.csv("script/parameter_space.csv")
+ parameter_space <- utils::read.csv("script/parameter_space.csv")
 #
 # # Initialize the space for outputs
  iw_sim_list <- list()

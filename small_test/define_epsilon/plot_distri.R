@@ -90,7 +90,7 @@ summary_stats <- long_data  |>
   group_by(Statistic)  |>
   summarize(
     median = median(Difference),
-    Percentile_95 = quantile(Difference, probs = 0.95),
+    Percentile_95 = stats::quantile(Difference, probs = 0.95),
     max_val = max(Difference)
   )
 

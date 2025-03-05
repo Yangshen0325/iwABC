@@ -7,13 +7,14 @@
 #' @param print_frequency The frequency of printing out the progress.
 #' @param sigma The standard deviation of the normal distribution used to generate the proposal distribution.
 #' @param stop_rate The stopping rate of the ABC-SMC algorithm (the process should stop if the success rate falls below it)
+#' @param num_threads number of threads
 
 
 
 
 
 #' @export
-run_ABC <- function(param_set,
+run_ABC_par <- function(param_set,
                     idparsopt,
                     ss_set = 0,
                     number_of_particles = 10,
@@ -21,7 +22,8 @@ run_ABC <- function(param_set,
                     print_frequency = 20,
                     sigma = 0.05,
                     stop_rate = 1e-5,
-                    saveOrNot = TRUE){
+                    saveOrNot = TRUE,
+                    num_threads = 1){
 
   # Read data
   param_space <- utils::read.csv("data/parameter_space.csv")
@@ -47,7 +49,7 @@ run_ABC <- function(param_set,
   }
 
   # Run ABC-SMC
-  abc <- ABC_SMC_iw(obs_data = obs_sim,
+  abc <- ABC_SMC_iw_par(obs_data = obs_sim,
                     calc_ss_function = calc_ss_iw,
                     init_epsilon_values = init_epsilon,
                     prior_generating_function = prior_gen,
@@ -59,7 +61,8 @@ run_ABC <- function(param_set,
                     num_iterations = num_iterations,
                     idparsopt = idparsopt,
                     pars = as.numeric(obs_sim_pars[1:5]),
-                    ss_set = ss_set)
+                    ss_set = ss_set,
+                    num_threads = num_threads)
 
   if(saveOrNot == TRUE){
     save_output(output = abc,

@@ -1,4 +1,4 @@
-# args <- commandArgs(TRUE)
+args <- commandArgs(TRUE)
 
 #args <- c(0.4,0,20,0.003,0.1)
 
@@ -24,14 +24,21 @@ metadata <- paste0("This is parameter set ", param_set)
 
 library(iwABC)
 
-iwABC::run_ABC(
+t0 <- Sys.time()
+
+iwABC::run_ABC_par(
   param_set = as.numeric(args[1]),
   idparsopt = as.numeric(idparsopt),
   saveOrNot = saveOrNot,
   ss_set = 0,
   number_of_particles = 100,
-  num_iterations = 5
+  num_iterations = 7,
+  num_threads = 8
 )
+
+t1 <- Sys.time()
+
+difftime(t1, t0)
 
 want_to_plot <- FALSE
 

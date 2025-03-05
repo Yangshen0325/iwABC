@@ -5,7 +5,7 @@ library(iwABC)
 
 # Read data
 
-parameter_space <- read.csv("~/iwABC/script/parameter_space.csv")
+parameter_space <- utils::read.csv("~/iwABC/script/parameter_space.csv")
 iw_observations <- readRDS("~/iwABC/script/iw_observations.rds")
 
 # this data is from Shu's parameter setting but plus the initial K setting,

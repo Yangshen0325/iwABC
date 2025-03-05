@@ -10,7 +10,7 @@ clade_size_sd <- function(sim){
     if(length(clade_size) == 1){
       clade_size_sd <- 0
     } else{
-      clade_size_sd <- sd(clade_size)
+      clade_size_sd <- stats::sd(clade_size)
     }
   }
   return(clade_size_sd)
