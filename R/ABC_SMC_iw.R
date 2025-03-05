@@ -71,7 +71,7 @@ ABC_SMC_iw <- function(
 
     number_accepted <- 0
 
-    sigma_temp <- sigma * exp(-0.2 * (i - 1))
+    sigma_temp <- sigma * exp(-0.5 * (i - 1)) # old value is 0.2
 
     # Reset `new_weight` and `new_params`
     if (i > 1) {
@@ -107,6 +107,8 @@ ABC_SMC_iw <- function(
                                                     0, sigma_temp))
       }
 
+    #  cat(parameters, "\n")
+
       # Reject if outside the prior
       if (prior_density_function(pars, idparsopt) > 0) {
 
@@ -127,18 +129,25 @@ ABC_SMC_iw <- function(
         accept <- TRUE
 
         # Calculate the summary statistics for the simulated tree
-        if (accept) {
+     #   if (accept) {
           df_stats <- calc_ss_function(sim1 = obs_data,
                                        sim2 = new_sim[[1]],
                                        ss_set = ss_set)
 
           # Check if the summary statistics meet the criteria, yes-accept, any of them is larger than epsilon-reject
-          for (k in seq_along(df_stats)) {
-            if (as.numeric(df_stats[k]) > epsilon[i, k]) {
-              accept <- FALSE
-            }
-          }
-        }
+          #for (k in seq_along(df_stats)) {
+          #  if (as.numeric(df_stats[k]) > epsilon[i, k]) {
+          #    accept <- FALSE
+          #  }
+            num_accepted_stats <- df_stats < epsilon[i, ]
+            if (sum(num_accepted_stats) != length(df_stats)) accept <- FALSE
+
+        #    cat(i, df_stats, "\n")
+        #    cat(i, num_accepted_stats, "\n")
+          #}
+      #  }
+
+   #     cat(accept, "\n")
 
         if (accept) {
           # Update the number of accepted particles
@@ -190,7 +199,7 @@ ABC_SMC_iw <- function(
     ss_diff_list[[i]] <- ss_diff
 
     if (stoprate_reached == FALSE) {
-      epsilon[i + 1, ] <- apply(ss_diff, 2, quantile, probs = 0.5)
+      epsilon[i + 1, ] <- apply(ss_diff, 2, quantile, probs = 0.95)
     }
 
     ABC <- c()

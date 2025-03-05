@@ -10,20 +10,23 @@
 
 
 
-# Read data
-param_space <- read.csv("data/parameter_space.csv")
-iw_observations <- readRDS("data/iw_observations.rds")
+
 
 #' @export
 run_ABC <- function(param_set,
                     idparsopt,
                     ss_set = 0,
-                    number_of_particles = 2,
-                    num_iterations = 2,
-                    print_frequency = 1,
+                    number_of_particles = 10,
+                    num_iterations = 20,
+                    print_frequency = 20,
                     sigma = 0.05,
-                    stop_rate = 1e-3,
+                    stop_rate = 1e-5,
                     saveOrNot = TRUE){
+
+  # Read data
+  param_space <- read.csv("data/parameter_space.csv")
+  iw_observations <- readRDS("data/iw_observations.rds")
+
   # set seed and print out
   seed <- as.integer(Sys.time()) %% 1000000L * param_set
   set.seed(seed)
@@ -36,7 +39,7 @@ run_ABC <- function(param_set,
 
   # Choose the summary statistics set
   if(ss_set == 0){ # all
-    init_epsilon <- c(1500, 100, 100, 150, 500, 100, 250, 1, 10, 80, 100, 300)
+    init_epsilon <- c(1500, 100, 100, 150, 500, 100, 250, 10, 10, 80, 100, 1000)
   } else if (ss_set == 1){  #
     init_epsilon <- c(200,50,50,50,50)
   } else {
