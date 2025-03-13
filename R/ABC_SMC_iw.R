@@ -8,11 +8,13 @@
 #'  prior distribution.
 #' @param prior_density_function Function to calculate the prior probability.
 #' @param number_of_particles The number of particles in each iteration.
+#' @param print_frequency The frequency of printing the progress.
 #' @param sigma Standard deviation of the perturbation distribution.
 #' @param stop_rate A numeric value which is the boundary to stop the algorithm.
 #' @param num_iterations The maximum number of iterations.
 #' @param idparsopt The id of the parameters that need to be inferred, the others
 #'  are fixed.
+#' @param pars A vector of parameters.
 #' @param ss_set A numeric indicates which set of summary statistics that
 #'  are used to calculate the distance.
 #'  @export
@@ -34,7 +36,7 @@ ABC_SMC_iw <- function(
     ss_set
 ) {
 
-  # Generate a matrix with epsilon values
+  # Generate a matrix with epsilon values, assuming after 20 iterations, convergence occurs (Shu)
   epsilon <- matrix(nrow = 20, ncol = length(init_epsilon_values))
   epsilon[1, ] <- init_epsilon_values
 
@@ -168,11 +170,11 @@ ABC_SMC_iw <- function(
           new_weights[number_accepted] <- accepted_weight
 
           # Print(**) out every certain number of particles, showing the progress on screen
-          if ((number_accepted) %%
-              (number_of_particles / print_frequency) == 0) {
-            cat("**")
-            utils::flush.console()
-          }
+          # if ((number_accepted) %%
+          #     (number_of_particles / print_frequency) == 0) {
+          #   cat("**")
+          #   utils::flush.console()
+          # }
         }
       }
 
@@ -186,6 +188,8 @@ ABC_SMC_iw <- function(
         }
       }
     }
+
+    message("tried times: ", tried)
 
     ss_diff_list[[i]] <- ss_diff
 
@@ -209,7 +213,6 @@ ABC_SMC_iw <- function(
     }
   }
 
-  message("tried times: ", tried)
 
   output <- list(sim_list = sim_list,
                  ABC = ABC_list,
