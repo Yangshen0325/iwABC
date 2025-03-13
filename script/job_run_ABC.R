@@ -1,5 +1,6 @@
 args <- commandArgs(TRUE)
 
+
 args <- c(1, 1, 2, 3, 4, 5)
 
 param_set <- as.numeric(args[1])
@@ -12,7 +13,8 @@ ss_set <- 0 # as.numeric(args[7])
 
 idparsopt_all <- c(idparsopt_lac, idparsopt_mu, idparsopt_K, idparsopt_gam, idparsopt_laa)
 
-idparsopt <- idparsopt_all # which(idparsopt_all == 1)
+
+idparsopt <- idparsopt_all #which(idparsopt_all == 1)
 
 saveOrNot <- TRUE
 
@@ -24,7 +26,8 @@ library(iwABC)
 
 t0 <- Sys.time()
 
-iwABC::run_ABC(
+
+iwABC::run_ABC_par(
   param_set = as.numeric(args[1]),
   idparsopt = as.numeric(idparsopt),
   saveOrNot = saveOrNot,
@@ -42,24 +45,24 @@ want_to_plot <- FALSE
 
 if (want_to_plot) {
 
+require(tidyverse)
 
-  require(tidyverse)
+res <- readRDS("/Users/thijsjanzen/Documents/GitHub/iwABC/results/param_set_1_ss_0.rds")
 
-  res <- readRDS("/Users/thijsjanzen/Documents/GitHub/iwABC/results/param_set_1_ss_0.rds")
+to_plot <- c()
+for (i in 1:length(res$ABC)) {
+ to_add <- cbind(i, res$ABC[[i]])
+ to_plot <- rbind(to_plot, to_add)
+}
 
-  to_plot <- c()
-  for (i in 1:length(res$ABC)) {
-    to_add <- cbind(i, res$ABC[[i]])
-    to_plot <- rbind(to_plot, to_add)
-  }
-
-  colnames(to_plot) <- c("iteration", "lac", "mu", "K", "gam", "laa")
-  to_plot <- as_tibble(to_plot)
-  to_plot %>%
-    gather(key = parameter, value = "value", -iteration) %>%
-    ggplot(aes(x = iteration, y = value, group = iteration)) +
+colnames(to_plot) <- c("iteration", "lac", "mu", "K", "gam", "laa")
+to_plot <- as_tibble(to_plot)
+to_plot %>%
+  gather(key = parameter, value = "value", -iteration) %>%
+  ggplot(aes(x = iteration, y = value, group = iteration)) +
     geom_boxplot() +
-    scale_y_log10() +
-    facet_wrap(~parameter, scales = "free")
+  scale_y_log10() +
+  facet_wrap(~parameter, scales = "free")
+
 }
 
