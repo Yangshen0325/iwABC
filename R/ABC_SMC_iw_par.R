@@ -8,19 +8,18 @@
 #'  prior distribution.
 #' @param prior_density_function Function to calculate the prior probability.
 #' @param number_of_particles The number of particles in each iteration.
-#' @param print_frequency The frequency of printing the progress.
 #' @param sigma Standard deviation of the perturbation distribution.
 #' @param stop_rate A numeric value which is the boundary to stop the algorithm.
 #' @param num_iterations The maximum number of iterations.
 #' @param idparsopt The id of the parameters that need to be inferred, the others
 #'  are fixed.
-#' @param pars A vector of parameters.
 #' @param ss_set A numeric indicates which set of summary statistics that
 #'  are used to calculate the distance.
+#' @param num_threads number of threads
 #'  @export
 
 
-ABC_SMC_iw <- function(
+ABC_SMC_iw_par <- function(
     obs_data,
     calc_ss_function,
     init_epsilon_values,
@@ -33,10 +32,11 @@ ABC_SMC_iw <- function(
     num_iterations,
     idparsopt,
     pars,
-    ss_set
+    ss_set,
+    num_threads = 1
 ) {
 
-  # Generate a matrix with epsilon values, assuming after 20 iterations, convergence occurs (Shu)
+  # Generate a matrix with epsilon values
   epsilon <- matrix(nrow = 20, ncol = length(init_epsilon_values))
   epsilon[1, ] <- init_epsilon_values
 
@@ -58,7 +58,7 @@ ABC_SMC_iw <- function(
   # Iterate through the number of iterations
   for (i in 1:num_iterations) {
 
-    ss_diff <- c()
+    ss_diff <- matrix(NA, nrow = number_of_particles, ncol = length(init_epsilon_values))
 
     n_iter <- n_iter + 1
 
@@ -71,7 +71,7 @@ ABC_SMC_iw <- function(
 
     tried <- 0
 
-    number_accepted <- 0
+
 
     sigma_temp <- sigma * exp(-0.5 * (i - 1)) # old value is 0.2
 
@@ -85,92 +85,113 @@ ABC_SMC_iw <- function(
     }
 
     stoprate_reached <- FALSE
-
+    num_tried <- 0
+    number_accepted <- 0
     while (number_accepted < number_of_particles) {
 
-      # In this initial step, generate parameters from the prior
-      if (i == 1) {
-        parameters <- prior_generating_function(pars = pars,
-                                                idparsopt = idparsopt)
-      } else {
-        #if not in the initial step, generate parameters
-        #from the weighted previous distribution:
+      block_size <- number_of_particles - number_accepted
+      if (num_tried > 0)
+        block_size <- block_size * num_tried / (1 + number_accepted) # 1 / (number_accepted / tried)
 
-        # Sample an index from the previous weights, and use the corresponding parameters as a baseline
-        index <- sample(x = indices, size = 1,
-                        replace = TRUE, prob = previous_weights)
-        for (p_index in seq_along(parameters)) {
-          parameters[p_index] <- previous_params[[index]][p_index]
+      block_size <- floor(block_size)
+
+      parameter_list <- list()
+      for (np in 1:block_size) {
+        # In this initial step, generate parameters from the prior
+        if (i == 1) {
+          parameter_list[[np]] <- prior_generating_function(pars = pars,
+                                                            idparsopt = idparsopt)
+        } else {
+          #if not in the initial step, generate parameters
+          #from the weighted previous distribution:
+
+          # Sample an index from the previous weights, and use the corresponding parameters as a baseline
+          index <- sample(x = indices, size = 1, prob = previous_weights)
+
+          local_parameters <- previous_params[[index]]
+
+          # Perturb the parameters
+          local_parameters[idparsopt] <- exp(log(local_parameters[idparsopt]) +
+                                               stats::rnorm(length(idparsopt), # add random noise
+                                                            0, sigma_temp))
+          parameter_list[[np]] <- local_parameters
         }
-
-        # Perturb the parameters
-        parameters[idparsopt] <- exp(log(parameters[idparsopt]) +
-                                       stats::rnorm(length(idparsopt), # add random noise
-                                                    0, sigma_temp))
       }
 
-    #  cat(parameters, "\n")
-
-      # Reject if outside the prior
-      if (prior_density_function(pars, idparsopt) > 0) {
-
-        # Simulate a new tree, given the proposed parameters. Using DAISIE IW model!!!
-        new_sim <- DAISIE::DAISIE_sim_cr(
-          time = 5,
-          M = 1000,
-          pars = as.numeric(c(parameters[1], parameters[2], parameters[3], parameters[4], parameters[5])),
-          replicates = 1,
-          divdepmodel = "IW",
-          nonoceanic_pars = c(0, 0),
-          sample_freq  = Inf,
-          plot_sims = FALSE,
-          verbose = FALSE,
-          cond = 1
-        )
-
+      process_particle <- function(par_values) {
         accept <- TRUE
+        if (prior_density_function(par_values, idparsopt) < 0) accept <- FALSE
 
-        # Calculate the summary statistics for the simulated tree
-     #   if (accept) {
+
+        if (accept) { # so far, so good
+
+          # Simulate a new tree, given the proposed parameters. Using DAISIE IW model!!!
+          new_sim <- DAISIE::DAISIE_sim_cr(
+            time = 5,
+            M = 1000,
+            pars = as.numeric(c(par_values[1], par_values[2], par_values[3], par_values[4], par_values[5])),
+            replicates = 1,
+            divdepmodel = "IW",
+            nonoceanic_pars = c(0, 0),
+            sample_freq  = Inf,
+            plot_sims = FALSE,
+            verbose = FALSE,
+            cond = 1
+          )
+
+          # Calculate the summary statistics for the simulated tree
           df_stats <- calc_ss_function(sim1 = obs_data,
                                        sim2 = new_sim[[1]],
                                        ss_set = ss_set)
 
-          # Check if the summary statistics meet the criteria, yes-accept, any of them is larger than epsilon-reject
-          #for (k in seq_along(df_stats)) {
-          #  if (as.numeric(df_stats[k]) > epsilon[i, k]) {
-          #    accept <- FALSE
-          #  }
-            num_accepted_stats <- df_stats < epsilon[i, ]
-            if (sum(num_accepted_stats) != length(df_stats)) accept <- FALSE
+          num_accepted_stats <- df_stats < epsilon[i, ]
+          if (sum(num_accepted_stats) != length(df_stats)) accept <- FALSE
+        }
 
-        #    cat(i, df_stats, "\n")
-        #    cat(i, num_accepted_stats, "\n")
-          #}
-      #  }
-
-   #     cat(accept, "\n")
-
+        out <- list(accept = accept)
         if (accept) {
+          out <- list("accept" = accept,
+                      "df_stats" = df_stats,
+                      "sim" = new_sim,
+                      "parameters" = par_values)
+        }
+        return(out)
+      }
+
+      want_to_debug <- FALSE
+
+      if (want_to_debug) {
+        res <- list()
+        for (r in 1:length(parameter_list)) {
+          res[[r]] <- process_particle(parameter_list[[r]])
+        }
+      } else {
+        res <- parallel::mclapply(parameter_list, process_particle,
+                                  mc.cores = num_threads)
+      }
+
+      num_tried <- num_tried + length(res)
+
+      for (l in 1:length(res)) {
+        if (res[[l]]$accept) {
           # Update the number of accepted particles
           number_accepted <- number_accepted + 1
 
           # Store the accepted particles
-          new_params[[number_accepted]] <- parameters
+          new_params[[number_accepted]] <- res[[l]]$parameters
 
           # Store the accepted simulations
-          sim_list[[number_accepted]] <- new_sim[[1]]
+          sim_list[[number_accepted]] <- res[[l]]$sim[[1]]
 
           accepted_weight <- 1
-
           # Store the difference of summary statistics
-          ss_diff <- rbind(ss_diff, df_stats)
+          ss_diff[number_accepted, ] <- res[[l]]$df_stats
 
           # Calculate the weight
           if (i > 1) {
             accepted_weight <- calc_weight(previous_weights,
                                            previous_params,
-                                           parameters,
+                                           res[[l]]$parameters,
                                            sigma_temp,
                                            prior_density_function,
                                            idparsopt)
@@ -179,26 +200,27 @@ ABC_SMC_iw <- function(
           new_weights[number_accepted] <- accepted_weight
 
           # Print(**) out every certain number of particles, showing the progress on screen
-          # if ((number_accepted) %%
-          #     (number_of_particles / print_frequency) == 0) {
-          #   cat("**")
-          #   utils::flush.console()
-          # }
+          if ((number_accepted) %%
+              (number_of_particles / print_frequency) == 0) {
+            cat("**")
+            utils::flush.console()
+          }
         }
-      }
 
-      # If the stopping condition is met, the loop exits early using `break`
-      tried <- tried + 1
-      if (tried > (1 / stop_rate) & n_iter > 4) {# it checks only after least 5 iterations
-
-        if ((number_accepted / tried) < stop_rate) {
-          stoprate_reached <- TRUE
-          break
-        }
+        if (number_accepted >= number_of_particles) break
       }
     }
 
-    message("tried times: ", tried)
+    # If the stopping condition is met, the loop exits early using `break`
+    tried <- tried + 1
+    if (tried > (1 / stop_rate) & n_iter > 4) {# it checks only after least 5 iterations
+
+      if ((number_accepted / tried) < stop_rate) {
+        stoprate_reached <- TRUE
+        break
+      }
+    }
+
 
     ss_diff_list[[i]] <- ss_diff
 
@@ -209,7 +231,7 @@ ABC_SMC_iw <- function(
     ABC <- c()
     for (k in seq_along(new_params)) {
       add <- c()
-      for (m in seq_along(parameters)) {
+      for (m in seq_along(new_params[[k]])) {
         add <- c(add, new_params[[k]][m])
       }
       ABC <- rbind(ABC, add)
@@ -222,6 +244,7 @@ ABC_SMC_iw <- function(
     }
   }
 
+  message("tried times: ", tried)
 
   output <- list(sim_list = sim_list,
                  ABC = ABC_list,

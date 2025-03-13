@@ -68,7 +68,7 @@ get_ss_diff <- function(
 iw_observations <- readRDS("iw_observations.rds")
 
 # read parameters generating empirical data, correponding 320 observations
-parameter_space <- read.csv("parameter_space.csv")
+parameter_space <- utils::read.csv("parameter_space.csv")
 
 # initialize the results
 ss_diff_list <- list()

@@ -10,7 +10,7 @@ colon_time_sd <- function(sim){
     if(length(colon_time) == 1){
       colon_time_sd <- 0
     } else{
-      colon_time_sd <- sd(colon_time)
+      colon_time_sd <- stats::sd(colon_time)
     }
   }
   return(colon_time_sd)
