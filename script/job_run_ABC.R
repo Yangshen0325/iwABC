@@ -31,9 +31,10 @@ iwABC::run_ABC_par(
   idparsopt = as.numeric(idparsopt),
   saveOrNot = saveOrNot,
   ss_set = 0,
-  number_of_particles = 100,
-  num_iterations = 7,
-  num_threads = 8
+  number_of_particles = 1000,
+  num_iterations = 5,
+  num_threads = 8,
+stop_rate = 1e-10
 )
 
 t1 <- Sys.time()
