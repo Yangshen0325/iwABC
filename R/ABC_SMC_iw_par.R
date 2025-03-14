@@ -58,7 +58,9 @@ ABC_SMC_iw_par <- function(
   # Iterate through the number of iterations
   for (i in 1:num_iterations) {
 
-    ss_diff <- matrix(NA, nrow = number_of_particles, ncol = length(init_epsilon_values))
+    ss_diff <- matrix(NA,
+                      nrow = number_of_particles,
+                      ncol = length(init_epsilon_values))
 
     n_iter <- n_iter + 1
 
@@ -68,10 +70,6 @@ ABC_SMC_iw_par <- function(
     utils::flush.console()
 
     print_frequency <- print_frequency
-
-    tried <- 0
-
-
 
     sigma_temp <- sigma * exp(-0.5 * (i - 1)) # old value is 0.2
 
@@ -85,15 +83,18 @@ ABC_SMC_iw_par <- function(
     }
 
     stoprate_reached <- FALSE
-    num_tried <- 0
+    tried <- 0
     number_accepted <- 0
+
     while (number_accepted < number_of_particles) {
 
       block_size <- number_of_particles - number_accepted
-      if (num_tried > 0)
-        block_size <- block_size * num_tried / (1 + number_accepted) # 1 / (number_accepted / tried)
+      if (tried > 0)
+        block_size <- block_size * tried / (1 + number_accepted) # 1 / (number_accepted / tried)
 
       block_size <- floor(block_size)
+
+     # cat("\n", i, tried, number_accepted, number_of_particles, block_size, "\n")
 
       parameter_list <- list()
       for (np in 1:block_size) {
@@ -119,7 +120,9 @@ ABC_SMC_iw_par <- function(
       }
 
       process_particle <- function(par_values) {
+
         accept <- TRUE
+
         if (prior_density_function(par_values, idparsopt) < 0) accept <- FALSE
 
 
@@ -149,7 +152,9 @@ ABC_SMC_iw_par <- function(
         }
 
         out <- list(accept = accept)
+
         if (accept) {
+
           out <- list("accept" = accept,
                       "df_stats" = df_stats,
                       "sim" = new_sim,
@@ -170,7 +175,7 @@ ABC_SMC_iw_par <- function(
                                   mc.cores = num_threads)
       }
 
-      num_tried <- num_tried + length(res)
+      tried <- tried + length(res)
 
       for (l in 1:length(res)) {
         if (res[[l]]$accept) {
@@ -209,18 +214,16 @@ ABC_SMC_iw_par <- function(
 
         if (number_accepted >= number_of_particles) break
       }
-    }
 
-    # If the stopping condition is met, the loop exits early using `break`
-    tried <- tried + 1
-    if (tried > (1 / stop_rate) & n_iter > 4) {# it checks only after least 5 iterations
+      # If the stopping condition is met, the loop exits early using `break`
+      if (tried > (1 / stop_rate) & n_iter > 4) {# it checks only after least 5 iterations
 
-      if ((number_accepted / tried) < stop_rate) {
-        stoprate_reached <- TRUE
-        break
+        if ((number_accepted / tried) < stop_rate) {
+          stoprate_reached <- TRUE
+          break
+        }
       }
     }
-
 
     ss_diff_list[[i]] <- ss_diff
 
@@ -228,16 +231,7 @@ ABC_SMC_iw_par <- function(
       epsilon[i + 1, ] <- apply(ss_diff, 2, stats::quantile, probs = 0.95)
     }
 
-    ABC <- c()
-    for (k in seq_along(new_params)) {
-      add <- c()
-      for (m in seq_along(new_params[[k]])) {
-        add <- c(add, new_params[[k]][m])
-      }
-      ABC <- rbind(ABC, add)
-    }
-
-    ABC_list[[i]] <- ABC
+    ABC_list[[i]] <- do.call(rbind, new_params)
 
     if (stoprate_reached) {
       break
