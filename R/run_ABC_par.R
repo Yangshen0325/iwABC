@@ -11,23 +11,21 @@
 
 
 
-
-
 #' @export
 run_ABC_par <- function(param_set,
-                    idparsopt,
-                    ss_set = 0,
-                    number_of_particles = 10,
-                    num_iterations = 20,
-                    print_frequency = 20,
-                    sigma = 0.05,
-                    stop_rate = 1e-5,
-                    saveOrNot = TRUE,
-                    num_threads = 1){
+                        idparsopt,
+                        ss_set = 0,
+                        number_of_particles = 100,
+                        num_iterations = 20,
+                        print_frequency = 20,
+                        sigma = 0.05,
+                        stop_rate = 1e-5,
+                        saveOrNot = TRUE,
+                        num_threads = 1){
 
-  # Read data
-  param_space <- utils::read.csv("data/parameter_space.csv")
-  iw_observations <- readRDS("data/iw_observations.rds")
+  # Read data, use file.path() to make them system-independent:
+  param_space <- utils::read.csv(file.path("data", "parameter_space.csv"))
+  iw_observations <- readRDS(file.path("data", "iw_observations.rds"))
 
   # set seed and print out
   seed <- as.integer(Sys.time()) %% 1000000L * param_set
