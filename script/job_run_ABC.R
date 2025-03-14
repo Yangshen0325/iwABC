@@ -13,7 +13,6 @@ ss_set <- as.numeric(args[7])
 
 idparsopt_all <- c(idparsopt_lac, idparsopt_mu, idparsopt_K, idparsopt_gam, idparsopt_laa)
 
-
 idparsopt <- idparsopt_all #which(idparsopt_all == 1)
 
 saveOrNot <- TRUE
@@ -27,7 +26,7 @@ iwABC::run_ABC_par(
   param_set = as.numeric(args[1]),
   idparsopt = as.numeric(idparsopt),
   saveOrNot = saveOrNot,
-  ss_set = 0,
+  ss_set = ss_set,
   number_of_particles = 100,
   num_iterations = 7,
   num_threads = 8
