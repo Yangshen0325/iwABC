@@ -25,14 +25,12 @@ library(iwABC)
 iwABC::run_ABC_par(
   param_set = as.numeric(args[1]),
   idparsopt = as.numeric(idparsopt),
-  ss_set = ss_set,
-  number_of_particles = 100,
-  num_iterations = 7,
-  print_frequency = 20,
-  sigma = 0.05,
-  stop_rate = 1e-7,
   saveOrNot = saveOrNot,
-  num_threads = 8
+  ss_set = 0,
+  number_of_particles = 100,
+  num_iterations = 10,
+  num_threads = 8,
+  stop_rate = 1e-7
 )
 
 
