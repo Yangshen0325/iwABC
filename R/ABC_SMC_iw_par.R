@@ -95,6 +95,9 @@ ABC_SMC_iw_par <- function(
       block_size <- floor(block_size)
 
      # cat("\n", i, tried, number_accepted, number_of_particles, block_size, "\n")
+     #e.g. We expect 1000 particle to be accepted, but only 900 are accepted in the first
+      # run, the accteptance ratio is 0.9, in order to get another 100 accepted particles,
+      # we need to run another 100 / 0.9 = 111 particles, so the block_size is 111.
 
       parameter_list <- list()
       for (np in 1:block_size) {
