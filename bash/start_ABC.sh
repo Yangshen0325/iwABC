@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task=8      # Allocate 8 CPU cores for this task
 #SBATCH --job-name=job_run_ABC
 #SBATCH --output=logs/ABC-%j.log
-#SBATCH --mem=5GB
+#SBATCH --mem=15GB
 #SBATCH --partition=regular
 
 # Arguments to follow the Rscript are as follows:
