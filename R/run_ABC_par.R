@@ -39,7 +39,7 @@ run_ABC_par <- function(param_set,
 
   # Choose the summary statistics set
   if(ss_set == 0){ # all
-    init_epsilon <- c(1500, 100, 100, 150, 500, 100, 250, 10, 10, 80, 100, 1000)
+    init_epsilon <- c(1500, 100, 100, 150, 500, 100, 250, 100, 100, 800, 100, 1000)
   } else if (ss_set == 1){  #
     init_epsilon <- c(200,50,50,50,50)
   } else {
