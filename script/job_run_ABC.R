@@ -1,8 +1,9 @@
 args <- commandArgs(TRUE)
 
-#args <- c(0.4,0,20,0.003,0.1)
+# Uncomment for local testing:
+# terminal_command <- c(1, 2, 3, 4, 5, 0)
+# args <- c(1, terminal_command)
 
-args <- c(1, 1, 2, 3, 4, 5)
 
 param_set <- as.numeric(args[1])
 idparsopt_lac <- as.numeric(args[2])
@@ -65,4 +66,3 @@ to_plot %>%
   scale_y_log10() +
   facet_wrap(~parameter, scales = "free")
 }
-
