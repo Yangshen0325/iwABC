@@ -84,7 +84,6 @@ ABC_SMC_iw_par <- function(
     tried <- 0
     number_accepted <- 0
 
-
     while (number_accepted < number_of_particles) {
 
       block_size <- number_of_particles - number_accepted
@@ -92,8 +91,6 @@ ABC_SMC_iw_par <- function(
         block_size <- block_size * tried / (1 + number_accepted) # 1 / (number_accepted / tried)
 
       block_size <- floor(block_size)
-
-      cat("\n", i, tried, number_accepted, number_of_particles, block_size, "\n")
 
       parameter_list <- list()
       random_indices <- sample(x = indices,
@@ -223,8 +220,6 @@ ABC_SMC_iw_par <- function(
   return(output)
 }
 
-
-
 #' @keywords internal
 process_particle <- function(par_values,
                              prior_density_function,
@@ -259,17 +254,13 @@ process_particle <- function(par_values,
 
   accept <- TRUE
 
-  num_accepted_stats <- df_stats < epsilon_values
+  num_accepted_stats <- df_stats <= epsilon_values
   if (sum(num_accepted_stats) != length(df_stats)) accept <- FALSE
 
-  if (accept == TRUE) {
+  out <- list("accept" = accept,
+              "df_stats" = df_stats,
+              "sim" = new_sim,
+              "parameters" = par_values)
 
-    out <- list("accept" = accept,
-                "df_stats" = df_stats,
-                "sim" = new_sim,
-                "parameters" = par_values)
-  } else {
-    out <- list("accept" = FALSE)
-  }
   return(out)
 }
