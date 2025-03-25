@@ -100,6 +100,11 @@ ABC_SMC_iw_par <- function(
       # we need to run another 100 / 0.9 = 111 particles, so the block_size is 111.
 
       parameter_list <- list()
+
+      random_indices <- sample(x = indices,
+                               size = block_size,
+                               prob = previous_weights,
+                               replace = TRUE)
       for (np in 1:block_size) {
         # In this initial step, generate parameters from the prior
         if (i == 1) {
@@ -110,7 +115,7 @@ ABC_SMC_iw_par <- function(
           #from the weighted previous distribution:
 
           # Sample an index from the previous weights, and use the corresponding parameters as a baseline
-          index <- sample(x = indices, size = 1, prob = previous_weights)
+          local_parameters <- previous_params[[random_indices[np]]]
 
           local_parameters <- previous_params[[index]]
 
@@ -122,66 +127,36 @@ ABC_SMC_iw_par <- function(
         }
       }
 
-      process_particle <- function(par_values) {
-
-        accept <- TRUE
-
-        if (prior_density_function(par_values, idparsopt) < 0) accept <- FALSE
-
-
-        if (accept) { # so far, so good
-
-          # Simulate a new tree, given the proposed parameters. Using DAISIE IW model!!!
-          new_sim <- DAISIE::DAISIE_sim_cr(
-            time = 5,
-            M = 1000,
-            pars = as.numeric(c(par_values[1], par_values[2], par_values[3], par_values[4], par_values[5])),
-            replicates = 1,
-            divdepmodel = "IW",
-            nonoceanic_pars = c(0, 0),
-            sample_freq  = Inf,
-            plot_sims = FALSE,
-            verbose = FALSE,
-            cond = 1
-          )
-
-          # Calculate the summary statistics for the simulated tree
-          df_stats <- calc_ss_function(sim1 = obs_data,
-                                       sim2 = new_sim[[1]],
-                                       ss_set = ss_set)
-
-          num_accepted_stats <- df_stats < epsilon[i, ]
-          if (sum(num_accepted_stats) != length(df_stats)) accept <- FALSE
-        }
-
-        out <- list(accept = accept)
-
-        if (accept) {
-
-          out <- list("accept" = accept,
-                      "df_stats" = df_stats,
-                      "sim" = new_sim,
-                      "parameters" = par_values)
-        }
-        return(out)
-      }
-
       want_to_debug <- FALSE
 
       if (want_to_debug) {
         res <- list()
         for (r in 1:length(parameter_list)) {
-          res[[r]] <- process_particle(parameter_list[[r]])
+          res[[r]] <- process_particle(parameter_list[[r]],
+                                       prior_density_function,
+                                       idparsopt,
+                                       calc_ss_function,
+                                       obs_data,
+                                       epsilon[i, ])
         }
+
       } else {
-        res <- parallel::mclapply(parameter_list, process_particle,
-                                  mc.cores = num_threads)
+        res <- parallel::mclapply(parameter_list,
+                                  process_particle,
+                                  prior_density_function = prior_density_function,
+                                  idparsopt = idparsopt,
+                                  calc_ss_function = calc_ss_function,
+                                  obs_data = obs_data,
+                                  epsilon_values = epsilon[i, ],
+                                  mc.cores = num_threads,
+                                  mc.preschedule = FALSE,
+                                  mc.allow.recursive = FALSE)
       }
 
       tried <- tried + length(res)
 
       for (l in 1:length(res)) {
-        if (res[[l]]$accept) {
+        if (res[[l]]$accept == TRUE) {
           # Update the number of accepted particles
           number_accepted <- number_accepted + 1
 
@@ -250,4 +225,50 @@ ABC_SMC_iw_par <- function(
                  obs_sim = obs_data,
                  ss_diff_list = ss_diff_list)
   return(output)
+}
+
+
+#' @keywords internal
+
+process_particle <- function(par_values,
+                             prior_density_function,
+                             idparsopt,
+                             calc_ss_function,
+                             obs_data,
+                             epsilon_values) {
+
+  if (prior_density_function(par_values, idparsopt) < 0) {
+    out <- list("accept" = FALSE)
+    return(out)
+  }
+
+    # Simulate a new tree, given the proposed parameters. Using DAISIE IW model!!!
+    new_sim <- DAISIE::DAISIE_sim_cr(
+      time = 5,
+      M = 1000,
+      pars = as.numeric(c(par_values[1], par_values[2], par_values[3], par_values[4], par_values[5])),
+      replicates = 1,
+      divdepmodel = "IW",
+      nonoceanic_pars = c(0, 0),
+      sample_freq  = Inf,
+      plot_sims = FALSE,
+      verbose = FALSE,
+      cond = 1
+    )
+
+    # Calculate the summary statistics for the simulated tree
+    df_stats <- calc_ss_function(sim1 = obs_data,
+                                 sim2 = new_sim[[1]],
+                                 ss_set = ss_set)
+    accept <- TRUE
+
+    num_accepted_stats <- df_stats <= epsilon_values
+    if (sum(num_accepted_stats) != length(df_stats)) accept <- FALSE
+
+    out <- list("accept" = accept,
+                "df_stats" = df_stats,
+                "sim" = new_sim,
+                "parameters" = par_values)
+
+  return(out)
 }
