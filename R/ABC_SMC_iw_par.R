@@ -117,8 +117,6 @@ ABC_SMC_iw_par <- function(
           # Sample an index from the previous weights, and use the corresponding parameters as a baseline
           local_parameters <- previous_params[[random_indices[np]]]
 
-          local_parameters <- previous_params[[index]]
-
           # Perturb the parameters
           local_parameters[idparsopt] <- exp(log(local_parameters[idparsopt]) +
                                                stats::rnorm(length(idparsopt), # add random noise
