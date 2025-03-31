@@ -27,8 +27,8 @@ iwABC::run_ABC_par(
   idparsopt = as.numeric(idparsopt),
   saveOrNot = saveOrNot,
   ss_set = 0,
-  number_of_particles = 100,
-  num_iterations = 10,
+  number_of_particles = 500,
+  num_iterations = 30,
   num_threads = 8,
   stop_rate = 1e-7
 )
