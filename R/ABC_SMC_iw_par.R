@@ -33,6 +33,7 @@ ABC_SMC_iw_par <- function(
     idparsopt,
     pars,
     ss_set,
+    start_of_file_name = "results_", # substitute this in your jobfile with something meaningfull
     num_threads = 1
 ) {
 
@@ -199,10 +200,22 @@ ABC_SMC_iw_par <- function(
     ss_diff_list[[i]] <- ss_diff
 
     if (stoprate_reached == FALSE) {
-      epsilon[i + 1, ] <- apply(ss_diff, 2, stats::quantile, probs = 0.95)
+
+      for (j in 1:length(ss_diff)) {
+        if (sd(ss_diff[, j]) > 0) {
+          epsilon[i + 1, ] <- stats::quantile(ss_diff[, j], probs = 0.95)
+        } else {
+          # no variation anymore
+          epsilon[i + 1, j] <- max(ss_diff[, j])
+        }
+      }
+
+      #epsilon[i + 1, ] <- apply(ss_diff, 2, stats::quantile, probs = 0.95)
     }
 
     ABC_list[[i]] <- do.call(rbind, new_params)
+    file_name <- paste0(start_of_file_name, i, ".txt")
+    saveRDS(ABC_list[[i]], file_name)
 
     if (stoprate_reached) {
       break

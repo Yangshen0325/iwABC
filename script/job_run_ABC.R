@@ -27,15 +27,16 @@ library(iwABC)
 
 t0 <- Sys.time()
 
-iwABC::run_ABC_par(
+res <- iwABC::run_ABC_par(
   param_set = as.numeric(args[1]),
   idparsopt = as.numeric(idparsopt),
   saveOrNot = saveOrNot,
   ss_set = 0,
   number_of_particles = 100,
-  num_iterations = 10,
-  num_threads = 8,
-stop_rate = 1e-7
+  num_iterations = 8,
+  num_threads = 10,
+  stop_rate = 1e-7,
+  start_of_file_name = paste0("set_", param_set, "_")
 )
 
 t1 <- Sys.time()
