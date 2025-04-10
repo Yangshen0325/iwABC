@@ -37,7 +37,7 @@ ABC_SMC_iw_par <- function(
 ) {
 
   # Generate a matrix with epsilon values
-  epsilon <- matrix(nrow = 20, ncol = length(init_epsilon_values))
+  epsilon <- matrix(nrow = num_iterations, ncol = length(init_epsilon_values))
   epsilon[1, ] <- init_epsilon_values
 
   # Initialise weights
@@ -261,7 +261,8 @@ process_particle <- function(par_values,
     accept <- TRUE
 
     num_accepted_stats <- df_stats <= epsilon_values
-    if (sum(num_accepted_stats) != length(df_stats)) accept <- FALSE
+    if (any(num_accepted_stats==FALSE) ) accept <- FALSE
+
 
     out <- list("accept" = accept,
                 "df_stats" = df_stats,
