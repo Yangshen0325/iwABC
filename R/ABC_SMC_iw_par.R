@@ -33,6 +33,7 @@ ABC_SMC_iw_par <- function(
     idparsopt,
     pars,
     ss_set,
+    start_of_file_name,
     num_threads = 1
 ) {
 
@@ -71,7 +72,7 @@ ABC_SMC_iw_par <- function(
 
     print_frequency <- print_frequency
 
-    sigma_temp <- sigma * exp(-0.5 * (i - 1)) # old value is 0.2
+    sigma_temp <- sigma * exp(-0.5 * (i - 1)) # old value is 0.2 * (i-1)
 
     # Reset `new_weight` and `new_params`
     if (i > 1) {
@@ -90,13 +91,14 @@ ABC_SMC_iw_par <- function(
 
       block_size <- number_of_particles - number_accepted
       if (tried > 0)
-        block_size <- block_size * tried / (1 + number_accepted) # 1 / (number_accepted / tried)
+        block_size <- block_size * tried / (1 + number_accepted) # `tried/(1+number_accepted)` is roughly the
+      # acceptance ratio. tried / (1 + number_accepted) = will_try_this_number / (remaining need to try)
 
       block_size <- floor(block_size)
 
      # cat("\n", i, tried, number_accepted, number_of_particles, block_size, "\n")
      #e.g. We expect 1000 particle to be accepted, but only 900 are accepted in the first
-      # run, the accteptance ratio is 0.9, in order to get another 100 accepted particles,
+      # run, the acceptance ratio is 0.9, in order to get another 100 accepted particles,
       # we need to run another 100 / 0.9 = 111 particles, so the block_size is 111.
 
       parameter_list <- list()
@@ -204,10 +206,23 @@ ABC_SMC_iw_par <- function(
     ss_diff_list[[i]] <- ss_diff
 
     if (stoprate_reached == FALSE) {
-      epsilon[i + 1, ] <- apply(ss_diff, 2, stats::quantile, probs = 0.95)
+
+      for (j in 1:length(ss_diff)) {
+        if (sd(ss_diff[, j]) > 0) {
+          epsilon[i + 1, ] <- stats::quantile(ss_diff[, j], probs = 0.95)
+        } else {
+          # no variation anymore
+          epsilon[i + 1, j] <- max(ss_diff[, j])
+        }
+      }
+
+      # epsilon[i + 1, ] <- apply(ss_diff, 2, stats::quantile, probs = 0.95)
     }
 
     ABC_list[[i]] <- do.call(rbind, new_params)
+
+    file_name <- paste0(start_of_file_name, i, ".rds")
+    saveRDS(ABC_list[[i]], file_name)
 
     if (stoprate_reached) {
       break
@@ -226,6 +241,15 @@ ABC_SMC_iw_par <- function(
 }
 
 
+
+
+# This function is to check whether the generated parameters can be accepted or not.
+# If the parameters are within the prior bounds, accept it and
+# simulate a new tree and calculate the summary statistics differences.
+# Particles can be rejected if: they are not within the prior bounds and any of them
+# is larger than epsilon.
+
+#' @param par_values a list of parameters
 #' @keywords internal
 
 process_particle <- function(par_values,
@@ -234,13 +258,14 @@ process_particle <- function(par_values,
                              calc_ss_function,
                              obs_data,
                              epsilon_values) {
-
+ # First check if the parameters are within the prior bounds, if not, this particle is rejected
   if (prior_density_function(par_values, idparsopt) < 0) {
     out <- list("accept" = FALSE)
     return(out)
   }
 
-    # Simulate a new tree, given the proposed parameters. Using DAISIE IW model!!!
+  # If the parameters are within the prior bounds, simulate a new tree
+  # Simulate a new tree, given the proposed parameters. Using DAISIE IW model!!!
     new_sim <- DAISIE::DAISIE_sim_cr(
       time = 5,
       M = 1000,
@@ -260,6 +285,7 @@ process_particle <- function(par_values,
                                  ss_set = ss_set)
     accept <- TRUE
 
+    # Check if the summary statistics meet the criteria, yes-accept, any of them is larger than epsilon-reject
     num_accepted_stats <- df_stats <= epsilon_values
     if (any(num_accepted_stats==FALSE) ) accept <- FALSE
 
