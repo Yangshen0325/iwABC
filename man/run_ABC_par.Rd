@@ -8,13 +8,14 @@ run_ABC_par(
   param_set,
   idparsopt,
   ss_set = 0,
-  number_of_particles = 10,
+  number_of_particles = 100,
   num_iterations = 20,
   print_frequency = 20,
   sigma = 0.05,
   stop_rate = 1e-05,
   saveOrNot = TRUE,
-  num_threads = 1
+  num_threads = 1,
+  start_of_file_name
 )
 }
 \arguments{

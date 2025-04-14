@@ -18,6 +18,7 @@ ABC_SMC_iw_par(
   idparsopt,
   pars,
   ss_set,
+  start_of_file_name,
   num_threads = 1
 )
 }

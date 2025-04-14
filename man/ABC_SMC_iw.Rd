@@ -35,6 +35,8 @@ prior distribution.}
 
 \item{number_of_particles}{The number of particles in each iteration.}
 
+\item{print_frequency}{The frequency of printing the progress.}
+
 \item{sigma}{Standard deviation of the perturbation distribution.}
 
 \item{stop_rate}{A numeric value which is the boundary to stop the algorithm.}
@@ -43,6 +45,8 @@ prior distribution.}
 
 \item{idparsopt}{The id of the parameters that need to be inferred, the others
 are fixed.}
+
+\item{pars}{A vector of parameters.}
 
 \item{ss_set}{A numeric indicates which set of summary statistics that
 are used to calculate the distance.
