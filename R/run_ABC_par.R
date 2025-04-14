@@ -21,7 +21,8 @@ run_ABC_par <- function(param_set,
                         sigma = 0.05,
                         stop_rate = 1e-5,
                         saveOrNot = TRUE,
-                        num_threads = 1){
+                        num_threads = 1,
+                        start_of_file_name){
 
   # Read data, use file.path() to make them system-independent:
   param_space <- utils::read.csv(file.path("data", "parameter_space.csv"))
@@ -60,7 +61,8 @@ run_ABC_par <- function(param_set,
                     idparsopt = idparsopt,
                     pars = as.numeric(obs_sim_pars[1:5]),
                     ss_set = ss_set,
-                    num_threads = num_threads)
+                    num_threads = num_threads,
+                    start_of_file_name = start_of_file_name)
 
   if(saveOrNot == TRUE){
     save_output(output = abc,
