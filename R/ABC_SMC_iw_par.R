@@ -207,7 +207,8 @@ ABC_SMC_iw_par <- function(
 
     if (stoprate_reached == FALSE) {
 
-      for (j in 1:length(ss_diff)) {
+      for (j in 1:ncol(ss_diff)) {
+
         if (sd(ss_diff[, j]) > 0) {
           epsilon[i + 1, ] <- stats::quantile(ss_diff[, j], probs = 0.95)
         } else {
