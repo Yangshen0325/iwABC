@@ -33,14 +33,14 @@ ABC_SMC_iw_par <- function(
     idparsopt,
     pars,
     ss_set,
-    start_of_file_name,
+    #start_of_file_name,
     num_threads = 1
 ) {
 
   # Generate a matrix with epsilon values
-  epsilon <- matrix(nrow = num_iterations, ncol = length(init_epsilon_values))
+  epsilon <- matrix(nrow = num_iterations + 1, ncol = length(init_epsilon_values))
+  # the first row is giving the initial epsilon values, the second starts iterations
   epsilon[1, ] <- init_epsilon_values
-
   # Initialise weights
   new_weights <- c()
   new_params <- list(c(seq_along(pars)))
@@ -64,6 +64,8 @@ ABC_SMC_iw_par <- function(
                       ncol = length(init_epsilon_values))
 
     n_iter <- n_iter + 1
+
+    sim_list_tep <- list() # to store simulations in each interation
 
     cat("\nGenerating Particles for iteration\t", i, "\n")
     cat("0--------25--------50--------75--------100\n")
@@ -164,7 +166,7 @@ ABC_SMC_iw_par <- function(
           new_params[[number_accepted]] <- res[[l]]$parameters
 
           # Store the accepted simulations
-          sim_list[[number_accepted]] <- res[[l]]$sim[[1]]
+          sim_list_tep[[number_accepted]] <- res[[l]]$sim[[1]]
 
           accepted_weight <- 1
           # Store the difference of summary statistics
@@ -204,6 +206,8 @@ ABC_SMC_iw_par <- function(
     }
 
     ss_diff_list[[i]] <- ss_diff
+    sim_list[[i]] <- sim_list_tep # This can store all accepted simulation outputs for evert interation
+                                 # Shu's code only keeps the last interation !!!!
 
     if (stoprate_reached == FALSE) {
 
@@ -222,8 +226,8 @@ ABC_SMC_iw_par <- function(
 
     ABC_list[[i]] <- do.call(rbind, new_params)
 
-    file_name <- paste0(start_of_file_name, i, ".rds")
-    saveRDS(ABC_list[[i]], file_name)
+    #file_name <- paste0(start_of_file_name, i, ".rds")
+    #saveRDS(ABC_list[[i]], file_name)
 
     if (stoprate_reached) {
       break
