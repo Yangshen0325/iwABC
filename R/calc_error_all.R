@@ -47,8 +47,8 @@ calc_error_all <- function(sim_1,
   brt1 <- lapply(sim_1[-1], "[[", "branching_times")
   brt2 <- lapply(sim_2[-1], "[[", "branching_times")
 
-  ltt_1 <- full_ltt(sim_1, brt1)
-  ltt_2 <- full_ltt(sim_2, brt2)
+  ltt_1 <- full_ltt(sim_1, brt1) # a table of two cols, one with all branching times in descending order,
+  ltt_2 <- full_ltt(sim_2, brt2) # one with the number of species 0,1,2,3,4...
 
   # Delete this to save time
   # total number species nltt error
