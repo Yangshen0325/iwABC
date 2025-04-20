@@ -141,6 +141,11 @@ calc_error_all <- function(sim_1,
   prop_largest_clade_2 <- largest_clade_size_2 / num_total_sim_2
   prop_largest_clade_diff <- abs(prop_largest_clade_1 - prop_largest_clade_2)
 
+  # the rank of the largest clade size
+  rank_largest_clade_1 <- get_rank_largest_clade(sim_1)
+  rank_largest_clade_2 <- get_rank_largest_clade(sim_2)
+  rank_largest_clade_diff <- abs(rank_largest_clade_1 - rank_largest_clade_2)
+
 
 
   # Colonisation difference  -------------------
@@ -168,6 +173,7 @@ calc_error_all <- function(sim_1,
       largest_cs_diff,
       first_cs_diff,
       prop_largest_clade_diff,
+      rank_largest_clade_diff,
 
       sd_colon_time,
       num_colon
