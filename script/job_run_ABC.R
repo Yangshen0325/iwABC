@@ -27,11 +27,11 @@ iwABC::run_ABC_par(
   idparsopt = as.numeric(idparsopt),
   saveOrNot = saveOrNot,
   ss_set = 0,
-  number_of_particles = 500,
-  num_iterations = 30,
+  number_of_particles = 1000,
+  num_iterations = 20,
   num_threads = 8,
-  stop_rate = 1e-7
-  #start_of_file_name = paste0("set_", param_set, "_")
+  stop_rate = 1e-7,
+  start_of_file_name = paste0("set_", param_set, "_")
 )
 
 
