@@ -5,11 +5,10 @@ library(iwABC)
 
 # Read data
 
-parameter_space <- utils::read.csv("~/iwABC/script/parameter_space.csv")
-iw_observations <- readRDS("~/iwABC/script/iw_observations.rds")
-
+#parameter_space <- utils::read.csv("~/iwABC/data/parameter_space.csv")
+#iw_observations <- readRDS("~/iwABC/data/iw_observations.rds")
 # this data is from Shu's parameter setting but plus the initial K setting,
-# and it's only 1 replication for each parameter combination.
+# and 10 replications for each parameter combination.
 
 # Initialise space
 MLE_allpars <- list()
@@ -19,7 +18,7 @@ for (i in 1:nrow(parameter_space)) {
   the_sim <- iw_observations[[i]]
 
   # Extract the initial parameters for simulation
-  pars_use <- parameter_space[i, ]
+  pars_use <- parameter_space[i, -ncol(parameter_space)]
 
   # Record seed for each estimation
   seed_mle <-as.integer(Sys.time()) %% 1000000L * sample(1:10,1)
