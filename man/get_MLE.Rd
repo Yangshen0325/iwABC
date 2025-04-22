@@ -9,7 +9,7 @@ get_MLE(the_sim, pars_use)
 \arguments{
 \item{the_sim}{simulation output from DAISIE IW simulation framework}
 
-\item{pars_use}{paramters used to generate the simulation output}
+\item{pars_use}{parameters used to generate the simulation output}
 }
 \value{
 a list
