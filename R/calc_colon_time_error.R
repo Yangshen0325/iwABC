@@ -1,4 +1,4 @@
-# Get the standard deviation of clonization time of simulation output
+# Get the standard deviation of colonization time of simulation output
 colon_time_sd <- function(sim){
   colon_time <- c()
   if (length(sim) == 1){
