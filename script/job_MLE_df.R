@@ -10,6 +10,10 @@ library(iwABC)
 # this data is from Shu's parameter setting but plus the initial K setting,
 # and 10 replications for each parameter combination.
 
+parameter_space <- utils::read.csv("~/iwABC/script/parameter_space_1rep.csv")
+iw_observations <- readRDS("~/iwABC/script/iw_observations_1rep.rds")
+# using only 1 rep for tesing
+
 # Initialise space
 MLE_allpars <- list()
 
