@@ -40,7 +40,7 @@ iw_DAISIE_sim <- function(parameters) {
 }
 
 # # Read data
- parameter_space <- utils::read.csv("script/parameter_space.csv")
+ parameter_space <- utils::read.csv("data/parameter_space.csv")
 #
 # # Initialize the space for outputs
  iw_sim_list <- list()
@@ -63,7 +63,7 @@ for (i in seq_len(nrow(parameter_space))) {
 #
  iw_observations <- lapply(iw_sim_list, function(x) x[[1]])
 #
- saveRDS(iw_observations, "script/iw_observations.rds")
+ saveRDS(iw_observations, "data/iw_observations.rds")
 
 
 
