@@ -31,7 +31,7 @@ iwABC::run_ABC_par(
   num_iterations = 20,
   num_threads = 8,
   stop_rate = 1e-7,
-  start_of_file_name = paste0("set_", param_set, "_")
+  start_of_file_name = paste0("set_", param_set, "_", ss_set, "_")
 )
 
 
