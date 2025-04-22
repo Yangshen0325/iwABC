@@ -2,7 +2,7 @@
 #' Maximum-likelihood estimation
 #'
 #' @param the_sim simulation output from DAISIE IW simulation framework
-#' @param pars_use paramters used to generate the simulation output
+#' @param pars_use parameters used to generate the simulation output
 #' @return a list
 #' @export
 
