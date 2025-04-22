@@ -122,12 +122,12 @@ calc_error_all <- function(sim_1,
   # Clade size difference ---------------------------------------------------------
 
   # standard deviation of clade size error
-  sd_clade_size <- calc_clade_size_error(sim_1, sim_2)
+  # sd_clade_size <- calc_clade_size_error(sim_1, sim_2)
 
-  # the largest clade size difference
+  # the largest clade size
   largest_clade_size_1 <- largest_clade_size(sim_1)
   largest_clade_size_2 <- largest_clade_size(sim_2)
-  largest_cs_diff <- abs(largest_clade_size_1 - largest_clade_size_2)
+  #largest_cs_diff <- abs(largest_clade_size_1 - largest_clade_size_2)
 
   # the first clade size difference
   first_clade_size_1 <- first_clade_size(sim_1)
@@ -146,6 +146,10 @@ calc_error_all <- function(sim_1,
   rank_largest_clade_2 <- get_rank_largest_clade(sim_2)
   rank_largest_clade_diff <- abs(rank_largest_clade_1 - rank_largest_clade_2)
 
+  # clade evenness difference
+  clade_evenness_1 <- calc_clade_evenness(sim_1)
+  clade_evenness_2 <- calc_clade_evenness(sim_2)
+  clade_evenness_diff <- abs(clade_evenness_1 - clade_evenness_2)
 
 
   # Colonisation difference  -------------------
@@ -169,11 +173,12 @@ calc_error_all <- function(sim_1,
       singleton_nltt,
       multi_nltt,
 
-      sd_clade_size,
-      largest_cs_diff,
+      #sd_clade_size,
+      #largest_cs_diff,
       first_cs_diff,
       prop_largest_clade_diff,
       rank_largest_clade_diff,
+      clade_evenness_diff,
 
       sd_colon_time,
       num_colon
