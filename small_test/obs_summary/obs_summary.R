@@ -1,41 +1,8 @@
+
+#### Try different combinations of parameters to get arounf 10 clades
+
+
 rm(list = ls())
-#### For the combination of 5 parameters, each of them running for 10 reps
-## to get the observation and analyze it.
-
-
-# Generate parameters -----------------------------------------------------
-
-
-## Define the parameters
-lac <- c(0.4, 0.7)
-mu <- c(0, 0.3)
-K <- c(20, 100)
-gam <- c(0.003, 0.009)
-laa <- c(0.1, 1.0)
-
-## Define replicates
-rep <- 10
-
-## Create all combinations
-param_space <- expand.grid(lac = lac,
-                           mu = mu,
-                           K = K,
-                           gam = gam,
-                           laa = laa
-)
-
-## Replicate each row of the parameter space 10 times
-parameter_space <- param_space[rep(seq_len(nrow(param_space)), each = rep), ]
-
-## Add a column for the replicate number (1 to 10)
-parameter_space$rep <- rep(1:rep, times = nrow(param_space))
-
-
-# DAISIE IW simulation ----------------------------------------------------
-
-# # Load the package,
-# !!!!!!! make sure it's on develop branch
-devtools::load_all("/Users/yangshen/Downloads/phd_yang/pkgs/DAISIE")
 
 iw_DAISIE_sim <- function(parameters) {
   success <- FALSE  # Initialize a flag to check if the simulation succeeded
@@ -71,6 +38,37 @@ iw_DAISIE_sim <- function(parameters) {
   return(iw_sim)  # Return the successful simulation result
 }
 
+
+
+
+
+## Define the parameters
+lac <- c(0.4, 0.7)
+mu <- c(0, 0.3)
+K <- c(20, 100)
+gam <- c(0.001, 0.002)
+laa <- c(0.1, 1.0)
+
+## Define replicates
+rep <- 10
+
+## Create all combinations
+param_space <- expand.grid(lac = lac,
+                           mu = mu,
+                           K = K,
+                           gam = gam,
+                           laa = laa
+)
+
+## Replicate each row of the parameter space 10 times
+rep_param_space <- param_space[rep(seq_len(nrow(param_space)), each = rep), ]
+
+## Add a column for the replicate number (1 to 10)
+rep_param_space$rep <- rep(1:rep, times = nrow(param_space))
+
+parameter_space <- rep_param_space
+
+
 # # Initialize the space for outputs
 iw_sim_list <- list()
 #
@@ -92,17 +90,14 @@ for (i in seq_len(nrow(parameter_space))) {
 #
 iw_observations <- lapply(iw_sim_list, function(x) x[[1]])
 
-saveRDS(iw_observations, "small_test/obs_summary/iw_observations.rds")
 
 
-# Visualize ---------------------------------------------------------------
-
-# Total number of species and clades
-# Initialize a data frame to store the summary
 summary_obs <- data.frame(total_sp = numeric(length(iw_observations)),
                           end_sp = numeric(length(iw_observations)),
                           nonend_sp = numeric(length(iw_observations)),
-                          no_clades = numeric(length(iw_observations)))
+                          no_clades = numeric(length(iw_observations)),
+                          largest_clade_size = numeric(length(iw_observations)),
+                          first_clade_size = numeric(length(iw_observations)))
 
 for (i in seq_along(iw_observations)) {
   # Extract the stt_all matrix
@@ -112,40 +107,37 @@ for (i in seq_along(iw_observations)) {
   summary_obs$end_sp[i] <- sum(stt_all[nrow(stt_all), c("nA", "nC")])
   summary_obs$nonend_sp[i] <- sum(stt_all[nrow(stt_all), c("nI")])
   summary_obs$no_clades[i] <- length(iw_observations[[i]]) - 1
+  summary_obs$largest_clade_size[i] <- largest_clade_size(iw_observations[[i]])
+  summary_obs$first_clade_size[i] <- first_clade_size(iw_observations[[i]])
 
 }
+param_data <- parameter_space
 
-summary_obs$set <- rep(1:32, each = 10)
+obs_combined <- bind_cols(param_data %>% select(-rep), summary_obs)
 
-library(tidyverse)
 
-p <- summary_obs |>
-  pivot_longer(
-    cols = !set,
-    names_to = "variable",
-    values_to = "value") |>
-  ggplot(aes(y = value)) +
+obs_combined <- obs_combined %>%
+  mutate(scenario = rep(1:32, each = 10))
+
+# Pivot to long format for ggplot
+obs_long <- obs_combined %>%
+  select(scenario, total_sp:first_clade_size) %>%
+  pivot_longer(-scenario, names_to = "metric", values_to = "value")
+
+# Boxplot
+p <- ggplot(obs_long, aes(x = factor(scenario), y = value)) +
   geom_boxplot() +
-  facet_wrap(~variable, scales = "free")
+  facet_wrap(~metric, scales = "free_y") +
+  theme_bw() +
+  labs(x = "Scenario", y = "Value",
+       title = 'lac=0.4_0.7, mu=0_0.3,
+       K=20_100, gam=0.001_0.002, laa=.1_1.0') +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5))
 
-ggsave("small_test/obs_summary/summary_obs.png", p, width = 10, height = 10, units = "in")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ggsave(filename = "small_test/obs_summary/p1.png",
+       plot = p,
+       width = 10,
+       height = 6,
+       dpi = 300,
+       units = "in",
+       device = "png")
