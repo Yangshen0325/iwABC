@@ -6,7 +6,7 @@ rm(list = ls())
 lac <- c(0.4, 0.7)
 mu <- c(0, 0.3)
 K <- c(20, 50, 100)
-gam <- c(0.003, 0.009)
+gam <- c(0.001, 0.002)
 laa <- c(0.1, 1.0)
 
 ## Define replicates
