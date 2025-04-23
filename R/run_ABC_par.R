@@ -21,8 +21,8 @@ run_ABC_par <- function(param_set,
                         sigma = 0.05,
                         stop_rate = 1e-5,
                         saveOrNot = TRUE,
-                        num_threads = 1){
-                        #start_of_file_name){
+                        num_threads = 1,
+                        start_of_file_name){
 
   # Read data, use file.path() to make them system-independent:
   param_space <- utils::read.csv(file.path("data", "parameter_space.csv"))
@@ -40,7 +40,19 @@ run_ABC_par <- function(param_set,
 
   # Choose the summary statistics set
   if(ss_set == 0){ # all
-    init_epsilon <- c(50, 50, 100, 100, 100, 200, 10, 50, 100, 10, 20, 10, 100)
+    init_epsilon <- c(50,   #num_nonend,
+                      50,   #num_sington,
+                      100,  #num_multi,
+                      100,  #nonend_nltt,
+                      100,  #singleton_nltt,
+                      200,  #multi_nltt,
+                      10,   #sd_clade_size,
+                      50,   #largest_cs_diff,
+                      100,  #first_cs_diff,
+                      10,   #prop_largest_clade_diff,
+                      20,   #rank_largest_clade_diff,
+                      10,   #sd_colon_time,
+                      100)  #num_colon
   } else if (ss_set == 1){  #
     init_epsilon <- c(200,50,50,50,50)
   } else {
@@ -61,8 +73,8 @@ run_ABC_par <- function(param_set,
                     idparsopt = idparsopt,
                     pars = as.numeric(obs_sim_pars[1:5]),
                     ss_set = ss_set,
-                    num_threads = num_threads)
-                    #start_of_file_name = start_of_file_name)
+                    num_threads = num_threads,
+                    start_of_file_name = start_of_file_name)
 
   if(saveOrNot == TRUE){
     save_output(output = abc,

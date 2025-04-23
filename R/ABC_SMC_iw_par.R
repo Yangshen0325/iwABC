@@ -33,7 +33,7 @@ ABC_SMC_iw_par <- function(
     idparsopt,
     pars,
     ss_set,
-    #start_of_file_name,
+    start_of_file_name,
     num_threads = 1
 ) {
 
@@ -65,7 +65,7 @@ ABC_SMC_iw_par <- function(
 
     n_iter <- n_iter + 1
 
-    sim_list_tep <- list() # to store simulations in each interation
+    sim_list_tep <- list() # to store simulations in each iteration
 
     cat("\nGenerating Particles for iteration\t", i, "\n")
     cat("0--------25--------50--------75--------100\n")
@@ -226,8 +226,15 @@ ABC_SMC_iw_par <- function(
 
     ABC_list[[i]] <- do.call(rbind, new_params)
 
-    #file_name <- paste0(start_of_file_name, i, ".rds")
-    #saveRDS(ABC_list[[i]], file_name)
+    out_tep <- list(sim_list = sim_list[[i]],
+                ABC = ABC_list[[i]],
+                n_iter = n_iter,
+                epsilon = epsilon[i+1, ],
+                obs_sim = obs_data,
+                ss_diff_list = ss_diff_list[[i]])
+
+    file_name <- paste0(start_of_file_name, i, ".rds")
+    saveRDS(out_tep, file_name)
 
     if (stoprate_reached) {
       break
@@ -242,6 +249,7 @@ ABC_SMC_iw_par <- function(
                  epsilon = epsilon,
                  obs_sim = obs_data,
                  ss_diff_list = ss_diff_list)
+
   return(output)
 }
 
@@ -254,8 +262,12 @@ ABC_SMC_iw_par <- function(
 # Particles can be rejected if: they are not within the prior bounds and any of them
 # is larger than epsilon.
 
+#' @title process particles
 #' @param par_values a list of parameters
 #' @keywords internal
+#' @name Thijs
+#' @export
+
 
 process_particle <- function(par_values,
                              prior_density_function,

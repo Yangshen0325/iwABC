@@ -14,7 +14,8 @@ run_ABC_par(
   sigma = 0.05,
   stop_rate = 1e-05,
   saveOrNot = TRUE,
-  num_threads = 1
+  num_threads = 1,
+  start_of_file_name
 )
 }
 \arguments{
