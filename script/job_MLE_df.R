@@ -33,6 +33,8 @@ for (i in 1:nrow(parameter_space)) {
 
   MLE_allpars[[i]] <- iwABC::get_MLE(the_sim = the_sim,
                                      pars_use = pars_use)
+  saveRDS(MLE_allpars[[i]],
+          file = paste0("~/iwABC/script/MLE_allpars_", i, ".rds"))
 
 }
 
