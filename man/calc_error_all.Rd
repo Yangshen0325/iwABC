@@ -5,7 +5,7 @@
 \title{Calculate summary statistic distances between two simulated trees when using all statistics
 Diversity difference: \code{num_nonend}, \code{num_sington}, \code{num_multi}
 NLTT difference: \code{nonend_nltt}, \code{singleton_nltt}, \code{multi_nltt}
-Clade size difference: \code{sd_clade_size}, \code{largest_cs_diff}, \code{first_cs_diff}, \code{prop_largest_clade_diff}
+Clade size difference: \code{first_cs_diff}, \code{prop_largest_clade_diff}, \code{rank_largest_clade_diff}, \code{clade_evenness_diff}
 Colonisation difference: \code{sd_colon_time}, \code{num_colon}}
 \usage{
 calc_error_all(sim_1, sim_2, replicates = 1, distance_method = "abs")
@@ -17,6 +17,6 @@ A vector with all error metrics:
 Calculate summary statistic distances between two simulated trees when using all statistics
 Diversity difference: \code{num_nonend}, \code{num_sington}, \code{num_multi}
 NLTT difference: \code{nonend_nltt}, \code{singleton_nltt}, \code{multi_nltt}
-Clade size difference: \code{sd_clade_size}, \code{largest_cs_diff}, \code{first_cs_diff}, \code{prop_largest_clade_diff}
+Clade size difference: \code{first_cs_diff}, \code{prop_largest_clade_diff}, \code{rank_largest_clade_diff}, \code{clade_evenness_diff}
 Colonisation difference: \code{sd_colon_time}, \code{num_colon}
 }

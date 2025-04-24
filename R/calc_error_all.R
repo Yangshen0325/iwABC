@@ -1,7 +1,7 @@
 #' Calculate summary statistic distances between two simulated trees when using all statistics
 #' Diversity difference: `num_nonend`, `num_sington`, `num_multi`
 #' NLTT difference: `nonend_nltt`, `singleton_nltt`, `multi_nltt`
-#' Clade size difference: `sd_clade_size`, `largest_cs_diff`, `first_cs_diff`, `prop_largest_clade_diff`
+#' Clade size difference: `first_cs_diff`, `prop_largest_clade_diff`, `rank_largest_clade_diff`, `clade_evenness_diff`
 #' Colonisation difference: `sd_colon_time`, `num_colon`
 #'
 #' @return A vector with all error metrics:
