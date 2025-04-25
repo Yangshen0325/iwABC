@@ -10,7 +10,7 @@ gam <- c(0.001, 0.002)
 laa <- c(0.1, 1.0)
 
 ## Define replicates
-rep <- 10
+reps <- 100
 
 ## Create all combinations
 param_space <- expand.grid(lac = lac,
@@ -21,13 +21,13 @@ laa = laa
 )
 
 ## Replicate each row of the parameter space 10 times
-rep_param_space <- param_space[rep(seq_len(nrow(param_space)), each = rep), ]
+rep_param_space <- param_space[rep(seq_len(nrow(param_space)), each = reps), ]
 
 ## Add a column for the replicate number (1 to 10)
-rep_param_space$rep <- rep(1:rep, times = nrow(param_space))
+rep_param_space$reps <- rep(1:reps, times = nrow(param_space))
 
 ## Save
-write.csv(rep_param_space, "data/parameter_space.csv", row.names = FALSE)
+write.csv(rep_param_space, "data/parameter_space_rep100_small_k.csv", row.names = FALSE)
 
 
 ## Make it a function

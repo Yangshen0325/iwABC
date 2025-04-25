@@ -1,3 +1,7 @@
+
+
+##### In folder "small_test/obs_summary", there the simulation has been changed
+##### to only allow smaller clades simulation (<10)
 # Get simulation outputs with IW model using DAISIE simulation framework
 
  rm(list=ls())
@@ -24,9 +28,18 @@ iw_DAISIE_sim <- function(parameters) {
         cond = 1
       )
 
-      # If no error, set success to TRUE and exit the loop
-      success <- TRUE
-      message("Simulation completed successfully.")
+      # Calculate the number of clades
+      num_clades <- length(iw_sim[[1]]) - 1
+
+      # Check if the number of clades is greater than 10
+      if (num_clades > 10) {
+        message("Number of clades is larger than 10. Retrying the simulation...")
+        success <- FALSE  # Retry the simulation
+      } else {
+        # If the number of clades is acceptable, set success to TRUE and exit the loop
+        success <- TRUE
+        message("Simulation completed successfully.")
+      }
 
     }, error = function(e) {
       # If an error occurs, display a message and retry
@@ -39,12 +52,18 @@ iw_DAISIE_sim <- function(parameters) {
   return(iw_sim)  # Return the successful simulation result
 }
 
+
 # # Read data
- parameter_space <- utils::read.csv("data/parameter_space.csv")
+ parameter_space <- utils::read.csv("data/parameter_space_rep100_small_k.csv")
 #
 # # Initialize the space for outputs
  iw_sim_list <- list()
-#
+
+ random_seed <- sample(1:1e6, 1)
+ set.seed(random_seed)
+ cat("the seed is: ", random_seed)
+ #291837
+
 # # Iterate through each row of the parameter space
 for (i in seq_len(nrow(parameter_space))) {
    cat("rep is ", i, "\n")
@@ -63,7 +82,7 @@ for (i in seq_len(nrow(parameter_space))) {
 #
  iw_observations <- lapply(iw_sim_list, function(x) x[[1]])
 #
- saveRDS(iw_observations, "data/iw_observations.rds")
+ saveRDS(iw_observations, "data/iw_observations_rep100_small_k.rds")
 
 
 
