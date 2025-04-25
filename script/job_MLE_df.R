@@ -1,46 +1,73 @@
-# Run on cluster
-library(iwABC)
+#!/usr/bin/env Rscript
+# ---------------------------------------------------
+# mle_job.R   -- compute one MLE for a given parameter set
+# ---------------------------------------------------
 
-# Maximum-likelihood estimation
+# Load libraries ------------------------------------------------------------
+suppressPackageStartupMessages({
+  library(optparse)
+  library(iwABC)
+  library(parallel)
+})
 
-# Read data
+# 1. parse args ------------------------------------------------------------
+option_list <- list(
+  make_option(c("--index"),  type="integer"),
+  make_option(c("--ncores"), type="integer")
+)
+opt <- parse_args(OptionParser(option_list=option_list))
+i      <- opt$index
+ncores <- opt$ncores
 
-#parameter_space <- utils::read.csv("~/iwABC/data/parameter_space.csv")
-#iw_observations <- readRDS("~/iwABC/data/iw_observations.rds")
-# this data is from Shu's parameter setting but plus the initial K setting,
-# and 10 replications for each parameter combination.
+# 2. load data -------------------------------------------------------------
+parameter_space <- read.csv("~/iwABC/data/parameter_space_rep100_small_k.csv")
+iw_obs_flat     <- readRDS("~/iwABC/data/iw_observations_rep100_small_k.rds")
 
-parameter_space <- utils::read.csv("~/iwABC/script/parameter_space_1rep.csv")
-iw_observations <- readRDS("~/iwABC/script/iw_observations_1rep.rds")
-# using only 1 rep for tesing
+n_total <- nrow(parameter_space)
+n_reps  <- 100
+n_sets  <- n_total / n_reps
+stopifnot(n_sets == as.integer(n_sets),
+          i >= 1, i <= n_sets)
 
-# Initialise space
-MLE_allpars <- list()
+# 3. slice out the 100 replicates for set i -------------------------------
+start_idx <- (i - 1) * n_reps + 1        # 1, 101, 201, …
+end_idx   <- i * n_reps                  # 100, 200, 300, …
+message(sprintf("Task %2d/%2d → rows %4d:%4d", i, n_sets, start_idx, end_idx))
 
-for (i in 1:nrow(parameter_space)) {
-  # Extract simulation output
-  the_sim <- iw_observations[[i]]
+the_sim   <- iw_obs_flat[start_idx:end_idx]
+pars_use  <- parameter_space[start_idx, -ncol(parameter_space)]
 
-  # Extract the initial parameters for simulation
-  pars_use <- parameter_space[i, -ncol(parameter_space)]
+# 4. set seed --------------------------------------------------------------
+seed_mle <- as.integer(Sys.time()) %% 1e6L * sample(1:10,1)
+set.seed(seed_mle)
+message("Index=", i, " seed=", seed_mle)
 
-  # Record seed for each estimation
-  seed_mle <-as.integer(Sys.time()) %% 1000000L * sample(1:10,1)
-  set.seed(seed_mle)
-  message("seed_mle: ", seed_mle)
+# 5. parallel MLE over 100 replicates --------------------------------------
+#    split the_sim (length 100) across ncores
+res_list <- mclapply(
+  the_sim,
+  function(one_rep) {
+    tryCatch(
+      iwABC::get_MLE(the_sim = list(one_rep), pars_use = pars_use),
+      error = function(e) {
+        message("  ⚠️ replicate failed: ", e$message)
+        return(NULL)
+      }
+    )
+  },
+  mc.cores = ncores
+)
 
-  message("initial pars used:", paste(pars_use, collapse = " "))
+# 5. aggregate & save ------------------------------------------------------
+res_df <- do.call(rbind, lapply(res_list, as.data.frame))
+outdir <- "~/iwABC/script/"
+if (!dir.exists(outdir)) dir.create(outdir, recursive = TRUE)
+outfile <- file.path(outdir, sprintf("MLE_allpars_%02d.rds", i))
 
-  MLE_allpars[[i]] <- iwABC::get_MLE(the_sim = the_sim,
-                                     pars_use = pars_use)
-  saveRDS(MLE_allpars[[i]],
-          file = paste0("~/iwABC/script/MLE_allpars_", i, ".rds"))
-
-}
-
-# Convert the list of results into a data frame
-MLE_df <- do.call(rbind, lapply(MLE_allpars, as.data.frame))
+saveRDS(res_df, file = outfile)
+message("Saved results to ", outfile)
 
 
-saveRDS(MLE_df,
-     file = "~/iwABC/script/MLE_df.rds")
+
+
+
