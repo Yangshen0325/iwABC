@@ -25,8 +25,8 @@ run_ABC_par <- function(param_set,
                         start_of_file_name){
 
   # Read data, use file.path() to make them system-independent:
-  param_space <- utils::read.csv(file.path("data", "parameter_space.csv"))
-  iw_observations <- readRDS(file.path("data", "iw_observations.rds"))
+  param_space <- utils::read.csv(file.path("data", "parameter_space_rep100_small_k.csv"))
+  iw_observations <- readRDS(file.path("data", "iw_observations_rep100_small_k.rds"))
 
   # set seed and print out
   seed <- as.integer(Sys.time()) %% 1000000L * param_set
@@ -43,16 +43,14 @@ run_ABC_par <- function(param_set,
     init_epsilon <- c(50,   #num_nonend,
                       50,   #num_sington,
                       100,  #num_multi,
-                      100,  #nonend_nltt,
-                      100,  #singleton_nltt,
-                      200,  #multi_nltt,
-                      10,   #sd_clade_size,
-                      50,   #largest_cs_diff,
-                      100,  #first_cs_diff,
+                      50,  #nonend_nltt,
+                      50,  #singleton_nltt,
+                      100,  #multi_nltt,
+                      50,  #first_clade_diff
                       10,   #prop_largest_clade_diff,
-                      20,   #rank_largest_clade_diff,
+                      10,   #rank_largest_clade_diff,
                       10,   #sd_colon_time,
-                      100)  #num_colon
+                      50)  #num_colon
   } else if (ss_set == 1){  #
     init_epsilon <- c(200,50,50,50,50)
   } else {
