@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --time=3-10:55:00
+#SBATCH --time=6-10:55:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8              # request 8 cores per job
