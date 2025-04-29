@@ -45,12 +45,26 @@ message("Index=", i, " seed=", seed_mle)
 # 5. parallel MLE over 100 replicates --------------------------------------
 #    split the_sim (length 100) across ncores
 res_list <- mclapply(
-  the_sim,
-  iwABC::get_MLE,
-  pars_use = pars_use,
-  mc.cores = ncores,
-  mc.preschedule = FALSE,
-  mc.allow.recursive = FALSE
+  seq_along(the_sim),
+  function(j) {
+    # before you call get_MLE, print which rep this is:
+    message(sprintf(
+      "[%s] Starting rep %3d on PID %d",
+      format(Sys.time(), "%H:%M:%S"),
+      j,
+      Sys.getpid()
+    ))
+    out <- iwABC::get_MLE(the_sim[[j]], pars_use = pars_use)
+    message(sprintf(
+      "[%s] Finished rep %3d",
+      format(Sys.time(), "%H:%M:%S"),
+      j
+    ))
+    out
+  },
+  mc.cores            = ncores,
+  mc.preschedule      = FALSE,      # better load balancing
+  mc.allow.recursive  = FALSE
 )
 # `mc.preschedule = FALSE` hands out tasks one by one as workers free up, which
 #  improves load balancing at the cost of a bit more scheduling overhead.
