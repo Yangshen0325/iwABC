@@ -7,20 +7,13 @@
 #SBATCH --mem=10GB
 #SBATCH --partition=regular
 #SBATCH --array=1-48                    # one task per parameter set
-#SBATCH --output=logs/MLE_df-%A_%a.out
-#SBATCH --error=logs/MLE_df-%A_%a.err
+#SBATCH --output=logs/MLE_df-%A_%a.log
 
 module load R-bundle-CRAN/2023.12-foss-2023a
 
 Rscript -e "if (!requireNamespace('DAISIE', quietly = TRUE)) devtools::install_github('rsetienne/DAISIE', ref = 'develop')"
 Rscript -e "if (!requireNamespace('iwABC', quietly = TRUE)) devtools::install_github('Yangshen0325/iwABC')"
 
-# export so mclapply/foreach picks it up if you use OpenMP
-# Sets the environment variable OMP_NUM_THREADS to the number of cores you requested from Slurm
-export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
-
-# now call your per‐parameter‐set R script,
-# passing it both the array index and the number of cores
 Rscript ~/iwABC/script/job_MLE_df.R \
-        --index $SLURM_ARRAY_TASK_ID \
-        --ncores $SLURM_CPUS_PER_TASK
+   --index $SLURM_ARRAY_TASK_ID \
+   --ncores $SLURM_CPUS_PER_TASK

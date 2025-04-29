@@ -46,17 +46,17 @@ message("Index=", i, " seed=", seed_mle)
 #    split the_sim (length 100) across ncores
 res_list <- mclapply(
   the_sim,
-  function(one_rep) {
-    tryCatch(
-      iwABC::get_MLE(the_sim = list(one_rep), pars_use = pars_use),
-      error = function(e) {
-        message("  ⚠️ replicate failed: ", e$message)
-        return(NULL)
-      }
-    )
-  },
-  mc.cores = ncores
+  iwABC::get_MLE,
+  pars_use = pars_use,
+  mc.cores = ncores,
+  mc.preschedule = FALSE,
+  mc.allow.recursive = FALSE
 )
+# `mc.preschedule = FALSE` hands out tasks one by one as workers free up, which
+#  improves load balancing at the cost of a bit more scheduling overhead.
+# `mc.allow.recursive = FALSE` forbids any further mclapply (or other forked calls)
+# inside your worker functions—safer if you know you won’t need nested parallelism.
+#
 
 # 5. aggregate & save ------------------------------------------------------
 res_df <- do.call(rbind, lapply(res_list, as.data.frame))
