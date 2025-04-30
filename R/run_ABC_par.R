@@ -49,6 +49,7 @@ run_ABC_par <- function(param_set,
                       50,  #first_clade_diff
                       10,   #prop_largest_clade_diff,
                       10,   #rank_largest_clade_diff,
+                      10, # clade evenness
                       10,   #sd_colon_time,
                       50)  #num_colon
   } else if (ss_set == 1){  #
