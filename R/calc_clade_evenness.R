@@ -4,7 +4,7 @@
 
 calc_clade_evenness <- function(sim) {
   if (length(sim) == 1) {
-    J <- NA # no clades
+    J <- 0 # no clades
   } else {
     clade_sublists <- sim[2:length(sim)] # exclude sim[[1]]
     clade_sizes <- sapply(clade_sublists, function(clade) {
@@ -14,7 +14,7 @@ calc_clade_evenness <- function(sim) {
     S <- length(clade_sizes) # number of clades
 
     if (S <= 1) {
-      return(NA)
+      return(0)
     }
 
     # Shannon evenness
