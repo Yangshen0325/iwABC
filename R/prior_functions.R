@@ -5,19 +5,19 @@
 prior_dens <- function(pars, idparsopt) {
 
   if(1 %in% idparsopt){
-    dens_lac <- stats::dunif(pars[1], 0, 1)
+    dens_lac <- stats::dunif(pars[1], 0, 2)
   } else {
     dens_lac <- 1
   }
 
   if(2 %in% idparsopt){
-    dens_mu <- stats::dunif(pars[2], 0, 0.5)
+    dens_mu <- stats::dunif(pars[2], 0, 2)
   } else {
     dens_mu <- 1
   }
 
   if(3 %in% idparsopt){
-    dens_k <- stats::dunif(pars[3], 0, 100)
+    dens_k <- stats::dunif(pars[3], 0, 500)
   } else {
     dens_k <- 1
   }
@@ -29,7 +29,7 @@ prior_dens <- function(pars, idparsopt) {
   }
 
   if(5 %in% idparsopt){
-    dens_laa <- stats::dunif(pars[5], 0, 1.5)
+    dens_laa <- stats::dunif(pars[5], 0, 2)
   } else {
     dens_laa <- 1
   }
