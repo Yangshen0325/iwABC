@@ -18,7 +18,7 @@ calc_clade_evenness <- function(sim) {
     }
 
     # Shannon evenness
-    H <- diversity(clade_sizes, index = "shannon")
+    H <- vegan::diversity(clade_sizes, index = "shannon")
     J <- H / log(S)
 
     return(J) # value between 0 (uneven) and 1 (perfect evenness)
