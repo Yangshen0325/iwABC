@@ -1,7 +1,9 @@
 args <- commandArgs(TRUE) # use command-line arguments passed when executing the script
 
 # Uncomment for local testing:
-# args <- c(1, 1, 2, 3, 4, 5)
+# args <- c(2, 1, 2, 3, 4, 5)
+
+DAISIE::DAISIE_IW_num_threads(1)
 
 param_set <- as.numeric(args[1])
 idparsopt_lac <- as.numeric(args[2])

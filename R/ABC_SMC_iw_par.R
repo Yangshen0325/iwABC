@@ -33,14 +33,14 @@ ABC_SMC_iw_par <- function(
     idparsopt,
     pars,
     ss_set,
-    start_of_file_name,
+    start_of_file_name = "results_", # substitute this in your jobfile with something meaningfull
     num_threads = 1
 ) {
 
   # Generate a matrix with epsilon values
-  epsilon <- matrix(nrow = num_iterations + 1, ncol = length(init_epsilon_values))
-  # the first row is giving the initial epsilon values, the second starts iterations
+  epsilon <- matrix(nrow = 20, ncol = length(init_epsilon_values))
   epsilon[1, ] <- init_epsilon_values
+
   # Initialise weights
   new_weights <- c()
   new_params <- list(c(seq_along(pars)))
@@ -65,16 +65,12 @@ ABC_SMC_iw_par <- function(
 
     n_iter <- n_iter + 1
 
-    sim_list_tep <- list() # to store simulations in each iteration
-
     cat("\nGenerating Particles for iteration\t", i, "\n")
     cat("0--------25--------50--------75--------100\n")
     cat("*")
     utils::flush.console()
 
-    print_frequency <- print_frequency
-
-    sigma_temp <- sigma * exp(-0.5 * (i - 1)) # old value is 0.2 * (i-1)
+    sigma_temp <- sigma * exp(-0.5 * (i - 1)) # old value is 0.2
 
     # Reset `new_weight` and `new_params`
     if (i > 1) {
@@ -93,18 +89,11 @@ ABC_SMC_iw_par <- function(
 
       block_size <- number_of_particles - number_accepted
       if (tried > 0)
-        block_size <- block_size * tried / (1 + number_accepted) # `tried/(1+number_accepted)` is roughly the
-      # acceptance ratio. tried / (1 + number_accepted) = will_try_this_number / (remaining need to try)
+        block_size <- block_size * tried / (1 + number_accepted) # 1 / (number_accepted / tried)
 
       block_size <- floor(block_size)
 
-     # cat("\n", i, tried, number_accepted, number_of_particles, block_size, "\n")
-     #e.g. We expect 1000 particle to be accepted, but only 900 are accepted in the first
-      # run, the acceptance ratio is 0.9, in order to get another 100 accepted particles,
-      # we need to run another 100 / 0.9 = 111 particles, so the block_size is 111.
-
       parameter_list <- list()
-
       random_indices <- sample(x = indices,
                                size = block_size,
                                prob = previous_weights,
@@ -119,6 +108,8 @@ ABC_SMC_iw_par <- function(
           #from the weighted previous distribution:
 
           # Sample an index from the previous weights, and use the corresponding parameters as a baseline
+      #    index <- sample(x = indices, size = 1, prob = previous_weights)
+
           local_parameters <- previous_params[[random_indices[np]]]
 
           # Perturb the parameters
@@ -129,20 +120,9 @@ ABC_SMC_iw_par <- function(
         }
       }
 
-      want_to_debug <- FALSE
-
-      if (want_to_debug) {
-        res <- list()
-        for (r in 1:length(parameter_list)) {
-          res[[r]] <- process_particle(parameter_list[[r]],
-                                       prior_density_function,
-                                       idparsopt,
-                                       calc_ss_function,
-                                       obs_data,
-                                       epsilon[i, ])
-        }
-
-      } else {
+      use_multithreading <- FALSE
+      res <- list()
+      if (use_multithreading) {
         res <- parallel::mclapply(parameter_list,
                                   process_particle,
                                   prior_density_function = prior_density_function,
@@ -153,6 +133,16 @@ ABC_SMC_iw_par <- function(
                                   mc.cores = num_threads,
                                   mc.preschedule = FALSE,
                                   mc.allow.recursive = FALSE)
+      } else {
+
+        for (r in 1:length(parameter_list)) {
+          res[[r]] <- process_particle(parameter_list[[r]],
+                                       prior_density_function,
+                                       idparsopt,
+                                       calc_ss_function,
+                                       obs_data,
+                                       epsilon[i, ])
+        }
       }
 
       tried <- tried + length(res)
@@ -166,7 +156,7 @@ ABC_SMC_iw_par <- function(
           new_params[[number_accepted]] <- res[[l]]$parameters
 
           # Store the accepted simulations
-          sim_list_tep[[number_accepted]] <- res[[l]]$sim[[1]]
+          sim_list[[number_accepted]] <- res[[l]]$sim[[1]]
 
           accepted_weight <- 1
           # Store the difference of summary statistics
@@ -205,14 +195,12 @@ ABC_SMC_iw_par <- function(
       }
     }
 
+
     ss_diff_list[[i]] <- ss_diff
-    sim_list[[i]] <- sim_list_tep # This can store all accepted simulation outputs for evert interation
-                                 # Shu's code only keeps the last interation !!!!
 
     if (stoprate_reached == FALSE) {
 
-      for (j in 1:ncol(ss_diff)) {
-
+      for (j in 1:length(ss_diff)) {
         if (sd(ss_diff[, j]) > 0) {
           epsilon[i + 1, ] <- stats::quantile(ss_diff[, j], probs = 0.95)
         } else {
@@ -221,20 +209,12 @@ ABC_SMC_iw_par <- function(
         }
       }
 
-      # epsilon[i + 1, ] <- apply(ss_diff, 2, stats::quantile, probs = 0.95)
+      #epsilon[i + 1, ] <- apply(ss_diff, 2, stats::quantile, probs = 0.95)
     }
 
     ABC_list[[i]] <- do.call(rbind, new_params)
-
-    out_tep <- list(sim_list = sim_list[[i]],
-                ABC = ABC_list[[i]],
-                n_iter = n_iter,
-                epsilon = epsilon[i+1, ],
-                obs_sim = obs_data,
-                ss_diff_list = ss_diff_list[[i]])
-
-    file_name <- paste0(start_of_file_name, i, ".rds")
-    saveRDS(out_tep, file_name)
+    file_name <- paste0(start_of_file_name, i, ".txt")
+    saveRDS(ABC_list[[i]], file_name)
 
     if (stoprate_reached) {
       break
@@ -249,68 +229,50 @@ ABC_SMC_iw_par <- function(
                  epsilon = epsilon,
                  obs_sim = obs_data,
                  ss_diff_list = ss_diff_list)
-
   return(output)
 }
 
-
-
-
-# This function is to check whether the generated parameters can be accepted or not.
-# If the parameters are within the prior bounds, accept it and
-# simulate a new tree and calculate the summary statistics differences.
-# Particles can be rejected if: they are not within the prior bounds and any of them
-# is larger than epsilon.
-
-#' @title process particles
-#' @param par_values a list of parameters
 #' @keywords internal
-#' @name Thijs
-#' @export
-
-
 process_particle <- function(par_values,
                              prior_density_function,
                              idparsopt,
                              calc_ss_function,
                              obs_data,
                              epsilon_values) {
- # First check if the parameters are within the prior bounds, if not, this particle is rejected
+
   if (prior_density_function(par_values, idparsopt) < 0) {
     out <- list("accept" = FALSE)
     return(out)
   }
 
-  # If the parameters are within the prior bounds, simulate a new tree
   # Simulate a new tree, given the proposed parameters. Using DAISIE IW model!!!
-    new_sim <- DAISIE::DAISIE_sim_cr(
-      time = 5,
-      M = 1000,
-      pars = as.numeric(c(par_values[1], par_values[2], par_values[3], par_values[4], par_values[5])),
-      replicates = 1,
-      divdepmodel = "IW",
-      nonoceanic_pars = c(0, 0),
-      sample_freq  = Inf,
-      plot_sims = FALSE,
-      verbose = FALSE,
-      cond = 1
-    )
+  new_sim <- DAISIE::DAISIE_sim_cr(
+    time = 5,
+    M = 1000,
+    pars = as.numeric(c(par_values[1], par_values[2], par_values[3], par_values[4], par_values[5])),
+    replicates = 1,
+    divdepmodel = "IW",
+    nonoceanic_pars = c(0, 0),
+    sample_freq  = Inf,
+    plot_sims = FALSE,
+    verbose = FALSE,
+    cond = 1
+  )
 
-    # Calculate the summary statistics for the simulated tree
-    df_stats <- calc_ss_function(sim1 = obs_data,
-                                 sim2 = new_sim[[1]],
-                                 ss_set = ss_set)
-    accept <- TRUE
+  # Calculate the summary statistics for the simulated tree
+  df_stats <- calc_ss_function(sim1 = obs_data,
+                               sim2 = new_sim[[1]],
+                               ss_set = ss_set)
 
-    # Check if the summary statistics meet the criteria, yes-accept, any of them is larger than epsilon-reject
-    num_accepted_stats <- df_stats <= epsilon_values
-    if (any(num_accepted_stats==FALSE) ) accept <- FALSE
+  accept <- TRUE
 
+  num_accepted_stats <- df_stats <= epsilon_values
+  if (sum(num_accepted_stats) != length(df_stats)) accept <- FALSE
 
-    out <- list("accept" = accept,
-                "df_stats" = df_stats,
-                "sim" = new_sim,
-                "parameters" = par_values)
+  out <- list("accept" = accept,
+              "df_stats" = df_stats,
+              "sim" = new_sim,
+              "parameters" = par_values)
 
   return(out)
 }

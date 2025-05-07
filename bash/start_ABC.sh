@@ -2,7 +2,7 @@
 #SBATCH --time=3-10:55:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=8      # Allocate 8 CPU cores for this task
+#SBATCH --cpus-per-task=1      # Allocate 8 CPU cores for this task
 #SBATCH --job-name=job_run_ABC
 #SBATCH --output=logs/ABC-%j.log
 #SBATCH --mem=30GB
