@@ -33,12 +33,12 @@ ABC_SMC_iw_par <- function(
     idparsopt,
     pars,
     ss_set,
-    start_of_file_name = "results_", # substitute this in your jobfile with something meaningfull
+    start_of_file_name,
     num_threads = 1
 ) {
 
   # Generate a matrix with epsilon values
-  epsilon <- matrix(nrow = 20, ncol = length(init_epsilon_values))
+  epsilon <- matrix(nrow = num_iterations + 1, ncol = length(init_epsilon_values))
   epsilon[1, ] <- init_epsilon_values
 
   # Initialise weights
