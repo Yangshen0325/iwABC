@@ -2,23 +2,25 @@
 # ---------------------------------------------------
 # mle_job.R   -- compute one MLE for a given parameter set
 # ---------------------------------------------------
+
+# Just in case: force single-threaded DAISIE_IW
 DAISIE::DAISIE_IW_num_threads(1)
 
 # Load libraries ------------------------------------------------------------
 suppressPackageStartupMessages({
   library(optparse)
   library(iwABC)
-  library(parallel)
 })
 
 # 1. parse args ------------------------------------------------------------
 option_list <- list(
-  make_option(c("--index"),  type="integer"),
-  make_option(c("--ncores"), type="integer")
+  make_option(c("--index"),  type="integer"),   # SLURM_ARRAY_TASK_ID
+  make_option(c("--tasks"),  type="integer")    # SLURM_ARRAY_TASK_COUNT
 )
 opt <- parse_args(OptionParser(option_list=option_list))
-i      <- opt$index
-ncores <- opt$ncores
+index <- opt$index
+tasks <- opt$ntasks
+
 
 # 2. load data -------------------------------------------------------------
 parameter_space <- read.csv("~/iwABC/data/parameter_space_rep100_small_k.csv")
@@ -27,6 +29,8 @@ iw_obs_flat     <- readRDS("~/iwABC/data/iw_observations_rep100_small_k.rds")
 n_total <- nrow(parameter_space)
 n_reps  <- 100
 n_sets  <- n_total / n_reps
+
+stopifnot((njobs))
 stopifnot(n_sets == as.integer(n_sets),
           i >= 1, i <= n_sets)
 
