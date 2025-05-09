@@ -12,16 +12,16 @@ suppressMessages({
 
 DAISIE::DAISIE_IW_num_threads(1)
 
-outdir <- "~/iwABC/out/mle/"  # output directory, 1 txt-file per sim
-
 # 1. parse args ------------------------------------------------------------
 option_list <- list(
   make_option(c("--index"),  type="integer"),
-  make_option(c("--ncores"), type="integer")
+  make_option(c("--ncores"), type="integer"),
+  make_option(c("--outdir"), type="string")
 )
 opt <- parse_args(OptionParser(option_list=option_list))
 i      <- opt$index
 ncores <- opt$ncores
+outdir <- "~/iwABC/out/mle/"
 
 # 2. load data -------------------------------------------------------------
 parameter_space <- read.csv("~/iwABC/data/parameter_space_rep100_small_k.csv")
