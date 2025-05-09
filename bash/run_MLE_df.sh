@@ -9,7 +9,9 @@
 #SBATCH --array=1-48                    # one task per parameter set
 #SBATCH --output=logs/MLE_df_nomc-%A_%a.log
 
+module load R-bundle-CRAN/2023.12-foss-2023a
+
 Rscript ~/iwABC/script/job_MLE_df.R \
    --index $SLURM_ARRAY_TASK_ID \
-   --njobs $SLURM_ARRAY_TASK_COUNT \
+   --ncores $SLURM_CPUS_PER_TASK \
    > /dev/null 2>&1
