@@ -4,20 +4,24 @@
 # ---------------------------------------------------
 
 # Load libraries ------------------------------------------------------------
-suppressPackageStartupMessages({
+suppressMessages({
   library(optparse)
   library(iwABC)
   library(parallel)
 })
 
+DAISIE::DAISIE_IW_num_threads(1)
+
+outdir <- "~/iwABC/out/mle/"
+
 # 1. parse args ------------------------------------------------------------
-option_list <- list(
-  make_option(c("--index"),  type="integer"),
-  make_option(c("--ncores"), type="integer")
-)
-opt <- parse_args(OptionParser(option_list=option_list))
-i      <- opt$index
-ncores <- opt$ncores
+# option_list <- list(
+#   make_option(c("--index"),  type="integer"),
+#   make_option(c("--ncores"), type="integer")
+# )
+# opt <- parse_args(OptionParser(option_list=option_list))
+i      <- 2 #opt$index
+ncores <- 32 #opt$ncores
 
 # 2. load data -------------------------------------------------------------
 parameter_space <- read.csv("~/iwABC/data/parameter_space_rep100_small_k.csv")
@@ -28,6 +32,8 @@ n_reps  <- 100
 n_sets  <- n_total / n_reps
 stopifnot(n_sets == as.integer(n_sets),
           i >= 1, i <= n_sets)
+
+if (!dir.exists(outdir)) dir.create(outdir, recursive = TRUE)
 
 # 3. slice out the 100 replicates for set i -------------------------------
 start_idx <- (i - 1) * n_reps + 1        # 1, 101, 201, …
@@ -60,28 +66,13 @@ res_list <- mclapply(
       format(Sys.time(), "%H:%M:%S"),
       j
     ))
+    out[["sim"]] = i;   # add sim index
+    out[["rep"]] = j;   # add rep
+    outfile <- file.path(outdir, sprintf("%d_%d.txt", i, j))
+    write.table(as.data.frame(out), file = outfile);
     out
   },
   mc.cores            = ncores,
   mc.preschedule      = FALSE,      # better load balancing
   mc.allow.recursive  = FALSE
 )
-# `mc.preschedule = FALSE` hands out tasks one by one as workers free up, which
-#  improves load balancing at the cost of a bit more scheduling overhead.
-# `mc.allow.recursive = FALSE` forbids any further mclapply (or other forked calls)
-# inside your worker functions—safer if you know you won’t need nested parallelism.
-#
-
-# 5. aggregate & save ------------------------------------------------------
-res_df <- do.call(rbind, lapply(res_list, as.data.frame))
-outdir <- "~/iwABC/script/"
-if (!dir.exists(outdir)) dir.create(outdir, recursive = TRUE)
-outfile <- file.path(outdir, sprintf("MLE_allpars_%02d.rds", i))
-
-saveRDS(res_df, file = outfile)
-message("Saved results to ", outfile)
-
-
-
-
-
