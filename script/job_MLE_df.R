@@ -12,7 +12,7 @@ suppressMessages({
 
 DAISIE::DAISIE_IW_num_threads(1)
 
-outdir <- "~/iwABC/out/mle/"
+outdir <- "~/iwABC/out/mle/"  # output directory, 1 txt-file per sim
 
 # 1. parse args ------------------------------------------------------------
 option_list <- list(
