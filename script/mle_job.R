@@ -3,15 +3,12 @@
 # mle_job.R   -- compute one MLE for a given parameter set
 # ---------------------------------------------------
 
-# set libraery (package) paths
-.libPaths(c('~/.R/libs'), .libPAths())
-
 # Load libraries ------------------------------------------------------------
-suppressPackageStartupMessages({
+#suppressPackageStartupMessages({
   library(DAISIE)
   library(optparse)
   library(iwABC)
-})
+#})
 
 # Just in case: force single-threaded DAISIE_IW
 DAISIE::DAISIE_IW_num_threads(1)
@@ -23,7 +20,7 @@ option_list <- list(
 )
 opt <- parse_args(OptionParser(option_list=option_list))
 index <- opt$index
-tasks <- opt$ntasks
+tasks <- opt$tasks
 message("index: ", index)
 message("task count: ", tasks)
 
@@ -35,22 +32,18 @@ n_total <- nrow(parameter_space)
 n_reps  <- 100
 n_sets  <- n_total / n_reps
 
-stopifnot(tasks == n_total * n_reps)
-# stopifnot(n_sets == as.integer(n_sets),
-#           i >= 1, i <= n_sets)
+stopifnot(tasks == n_sets * n_reps)
+set <- as.integer((index - 1) / n_reps) + 1
+rep <- as.integer((index - 1) %% n_reps) + 1 
 
-# # 3. slice out the 100 replicates for set i -------------------------------
-# start_idx <- (i - 1) * n_reps + 1        # 1, 101, 201, …
-# end_idx   <- i * n_reps                  # 100, 200, 300, …
-# message(sprintf("Task %2d/%2d → rows %4d:%4d", i, n_sets, start_idx, end_idx))
+the_sim <- iw_obs_flat[set * n_reps + rep]
+#pars_use  <- parameter_space[set * n_reps + rep, -ncol(parameter_space)]
+message("processing set ", set, " rep: ", rep)
 
-# the_sim   <- iw_obs_flat[start_idx:end_idx]
-# pars_use  <- parameter_space[start_idx, -ncol(parameter_space)]
+#seed_mle <- as.integer(Sys.time()) %% 1e6L * sample(1:10,1)
+#set.seed(seed_mle)
+#out <- iwABC::get_MLE(the_sim, pars_use = pars_use)
 
-# # 4. set seed --------------------------------------------------------------
-# seed_mle <- as.integer(Sys.time()) %% 1e6L * sample(1:10,1)
-# set.seed(seed_mle)
-# message("Index=", i, " seed=", seed_mle)
 
 # # 5. parallel MLE over 100 replicates --------------------------------------
 # #    split the_sim (length 100) across ncores
