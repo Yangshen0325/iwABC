@@ -3,9 +3,9 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=16              # request 16 cores per job
-#SBATCH --job-name=MLE_df_nomc
+#SBATCH --job-name=MLE_df_gelifes
 #SBATCH --mem=8GB
-#SBATCH --partition=regular
+#SBATCH --partition=gelifes
 #SBATCH --array=1-48                    # one task per parameter set
 #SBATCH --output=logs/MLE_df_nomc-%A_%a.log
 
