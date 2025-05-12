@@ -39,7 +39,6 @@ module load R-bundle-CRAN/2023.12-foss-2023a
 Rscript ~/iwABC/script/job_MLE_df.R \
    --index $SLURM_ARRAY_TASK_ID \
    --ncores $SLURM_CPUS_PER_TASK \
-   --outdir ~/iwABC/out/gelifes/mle/ \
    > /dev/null 2>&1
 ```
 
