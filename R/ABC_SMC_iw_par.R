@@ -213,7 +213,7 @@ ABC_SMC_iw_par <- function(
     }
 
     ABC_list[[i]] <- do.call(rbind, new_params)
-    file_name <- paste0(start_of_file_name, i, ".txt")
+    file_name <- paste0(start_of_file_name, i, ".rds")
     saveRDS(ABC_list[[i]], file_name)
 
     if (stoprate_reached) {
