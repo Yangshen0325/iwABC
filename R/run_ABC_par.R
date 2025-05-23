@@ -21,12 +21,12 @@ run_ABC_par <- function(param_set,
                         sigma = 0.05,
                         stop_rate = 1e-5,
                         saveOrNot = TRUE,
-                        num_threads = 1,
-                        start_of_file_name){
+                        num_threads = 1) {
+                        #start_of_file_name){
 
   # Read data, use file.path() to make them system-independent:
-  param_space <- utils::read.csv(file.path("data", "parameter_space_rep100_small_k.csv"))
-  iw_observations <- readRDS(file.path("data", "iw_observations_rep100_small_k.rds"))
+  param_space <- utils::read.csv("~/iwABCdata/parameter_space_rep100_large_k.csv")
+  iw_observations <- readRDS("~/iwABCdata/iw_observations_onlyABC.rds")
 
   # set seed and print out
   seed <- as.integer(Sys.time()) %% 1000000L * param_set
@@ -72,8 +72,8 @@ run_ABC_par <- function(param_set,
                     idparsopt = idparsopt,
                     pars = as.numeric(obs_sim_pars[1:5]),
                     ss_set = ss_set,
-                    num_threads = num_threads,
-                    start_of_file_name = start_of_file_name)
+                    num_threads = num_threads)
+                    #start_of_file_name = start_of_file_name)
 
   if(saveOrNot == TRUE){
     save_output(output = abc,
