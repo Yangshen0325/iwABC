@@ -40,18 +40,18 @@ run_ABC_par <- function(param_set,
 
   # Choose the summary statistics set
   if(ss_set == 0){ # all
-    init_epsilon <- c(50,   #num_nonend,
-                      50,   #num_sington,
-                      100,  #num_multi,
-                      50,  #nonend_nltt,
-                      50,  #singleton_nltt,
-                      100,  #multi_nltt,
-                      50,  #first_clade_diff
-                      10,   #prop_largest_clade_diff,
-                      10,   #rank_largest_clade_diff,
-                      10, # clade evenness
-                      10,   #sd_colon_time,
-                      50)  #num_colon
+    init_epsilon <- c(50,   # 1 num_nonend,
+                      50,   # 2 num_sington,
+                      100,  # 3 num_multi,
+                      50,   # 4 nonend_nltt,
+                      50,   # 5 singleton_nltt,
+                      100,  # 6 multi_nltt,
+                      50,   # 7 first_clade_diff
+                      1,    # 8 prop_largest_clade_diff,
+                      10,   # 9 rank_largest_clade_diff,
+                      1,    # 10 clade evenness
+                      5,    # 11 sd_colon_time,
+                      50)   # 12 num_colon
   } else if (ss_set == 1){  #
     init_epsilon <- c(200,50,50,50,50)
   } else {
