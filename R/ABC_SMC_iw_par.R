@@ -1,3 +1,9 @@
+
+#### check if it's for only ABC or ABC+MLE
+# only ABC, simulated data use island age=20
+# ABC+MLE, simulated data use island age=5
+
+
 #' ABC approach to estimate parameters in IW.
 #'
 #' @param obs_data A list of simulation output as observation.
@@ -33,7 +39,7 @@ ABC_SMC_iw_par <- function(
     idparsopt,
     pars,
     ss_set,
-    start_of_file_name,
+   # start_of_file_name,
     num_threads = 1
 ) {
 
@@ -213,8 +219,9 @@ ABC_SMC_iw_par <- function(
     }
 
     ABC_list[[i]] <- do.call(rbind, new_params)
-    file_name <- paste0(start_of_file_name, i, ".rds")
-    saveRDS(ABC_list[[i]], file_name)
+
+    # file_name <- paste0(start_of_file_name, i, ".rds")
+    # saveRDS(ABC_list[[i]], file_name)
 
     if (stoprate_reached) {
       break
@@ -247,7 +254,7 @@ process_particle <- function(par_values,
 
   # Simulate a new tree, given the proposed parameters. Using DAISIE IW model!!!
   new_sim <- DAISIE::DAISIE_sim_cr(
-    time = 5,
+    time = 20,
     M = 1000,
     pars = as.numeric(c(par_values[1], par_values[2], par_values[3], par_values[4], par_values[5])),
     replicates = 1,
