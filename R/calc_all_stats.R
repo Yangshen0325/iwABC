@@ -19,11 +19,17 @@ calc_all_stats <- function(sim) {
 # ABC NLTT ----------------------------------------------------------------
 
   brt_sim <- lapply(sim[-1], "[[", "branching_times")
+
   end_ltt_sim <- end_ltt(sim, brt_sim)
+
   nonend_ltt <- end_ltt_sim$nonend_ltt
   singleton_ltt <- end_ltt_sim$singleton_ltt
   multi_ltt <- end_ltt_sim$multi_ltt
+
   #NLTT-nonend
+  if (nonend_ltt[1, 1] == 0) {
+    nonend_nltt <- 0
+  } else {
   nonend_nltt <- nLTT::nltt_diff_exact_extinct(
     event_times = nonend_ltt$nonend_brt,
     species_number = nonend_ltt$n_nonend,
@@ -33,8 +39,12 @@ calc_all_stats <- function(sim) {
     time_unit = "ago",
     normalize = FALSE
   )
-  if (length(nonend_nltt) == 0) 0 else nonend_nltt
+  }
+
   #NLTT-singleton
+  if (singleton_ltt[1, 1] == 0) {
+    singleton_nltt <- 0
+  } else {
   singleton_nltt <- nLTT::nltt_diff_exact_extinct(
     event_times = singleton_ltt$singleton_brt,
     species_number = singleton_ltt$n_singleton,
@@ -44,8 +54,12 @@ calc_all_stats <- function(sim) {
     time_unit = "ago",
     normalize = FALSE
   )
-  if (length(singleton_nltt) == 0) 0 else singleton_nltt
+  }
+
   #NLTT-multi
+  if (multi_ltt[1, 1] == 0) {
+    multi_nltt <- 0
+  } else {
   multi_nltt <- nLTT::nltt_diff_exact_extinct(
     event_times = multi_ltt$multi_brt,
     species_number = multi_ltt$n_multi,
@@ -55,7 +69,8 @@ calc_all_stats <- function(sim) {
     time_unit = "ago",
     normalize = FALSE
   )
-  if (length(multi_nltt) == 0) 0 else multi_nltt
+  }
+
 
   # ABC CD ----------------------------------------------------------------
   # first clade
@@ -81,15 +96,18 @@ calc_all_stats <- function(sim) {
     num_nonend_sim = num_nonend_sim,
     num_sington_sim = num_sington_sim,
     num_multi_sim = num_multi_sim,
+
     nonend_nltt = nonend_nltt,
     singleton_nltt = singleton_nltt,
     multi_nltt = multi_nltt,
+
     #sim_cs_sd = sim_cs_sd,
     #largest_clade_size = largest_clade_size,
     first_clade_size = first_clade_size,
     prop_largest_clade = prop_largest_clade,
     rank_largest_clade = rank_largest_clade,
     clade_evenness = clade_evenness,
+
     sim_ct_sd = sim_ct_sd,
     num_colon = num_colon
   ))
