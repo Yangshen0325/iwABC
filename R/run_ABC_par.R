@@ -40,17 +40,31 @@ run_ABC_par <- function(param_set,
 
   # Choose the summary statistics set
   if(ss_set == 0){ # all
+    # init_epsilon <- c(50,   # 1 num_nonend,
+    #                   50,   # 2 num_sington,
+    #                   100,  # 3 num_multi,
+    #                   50,   # 4 nonend_nltt,
+    #                   50,   # 5 singleton_nltt,
+    #                   100,  # 6 multi_nltt,
+    #                   50,   # 7 first_clade_diff
+    #                   1,    # 8 prop_largest_clade_diff,
+    #                   10,   # 9 rank_largest_clade_diff,
+    #                   1,    # 10 clade evenness
+    #                   5,    # 11 sd_colon_time,
+    #                   50)   # 12 num_colon
+
+    # Run this when it's ABC only!!!! island age is 20, K is 100 and 1000
     init_epsilon <- c(50,   # 1 num_nonend,
                       50,   # 2 num_sington,
-                      100,  # 3 num_multi,
-                      50,   # 4 nonend_nltt,
-                      50,   # 5 singleton_nltt,
-                      100,  # 6 multi_nltt,
-                      50,   # 7 first_clade_diff
+                      1000,  # 3 num_multi,
+                      100,   # 4 nonend_nltt,
+                      200,   # 5 singleton_nltt,
+                      15000,  # 6 multi_nltt,
+                      1000,   # 7 first_clade_diff
                       1,    # 8 prop_largest_clade_diff,
-                      10,   # 9 rank_largest_clade_diff,
+                      50,   # 9 rank_largest_clade_diff,
                       1,    # 10 clade evenness
-                      5,    # 11 sd_colon_time,
+                      50,    # 11 sd_colon_time,
                       50)   # 12 num_colon
   } else if (ss_set == 1){  #
     init_epsilon <- c(200,50,50,50,50)
