@@ -28,6 +28,7 @@ run_ABC_par <- function(param_set,
   param_space <- utils::read.csv("~/iwABCdata/parameter_space_rep100_large_k.csv")
   iw_observations <- readRDS("~/iwABCdata/iw_observations_onlyABC.rds")
 
+  iw_observations <- lapply(iw_observations, "[[", 1)
   # set seed and print out
   seed <- as.integer(Sys.time()) %% 1000000L * param_set
   set.seed(seed)
