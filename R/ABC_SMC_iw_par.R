@@ -267,7 +267,7 @@ process_particle <- function(par_values,
   )
 
   # Calculate the summary statistics for the simulated tree
-  df_stats <- calc_ss_function(sim1 = obs_data[[1]],
+  df_stats <- calc_ss_function(sim1 = obs_data,
                                sim2 = new_sim[[1]],
                                ss_set = ss_set)
 
