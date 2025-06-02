@@ -1,11 +1,11 @@
 #!/bin/bash
-#SBATCH --time=15:55:00
+#SBATCH --time=3-23:55:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1      #
 #SBATCH --job-name=job_run_ABC
 #SBATCH --output=logs/ABC-%j.log
-#SBATCH --mem=10GB
+#SBATCH --mem=15GB
 #SBATCH --partition=regular
 
 # Check number of arguments
