@@ -41,7 +41,8 @@ get_MLE <- function(the_sim, pars_use) {
     optimmethod = "simplex",
     cond = 1,
     res = 100,
-    methode = 'odeint::runge_kutta_cash_karp54'
+    methode = 'odeint::runge_kutta_cash_karp54',
+    num_cycles = 5
 
   )
 
