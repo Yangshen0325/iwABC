@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task=1      #
 #SBATCH --job-name=job_run_ABC
 #SBATCH --output=logs/ABC-%j.log
-#SBATCH --mem=64GB
+#SBATCH --mem=80GB
 #SBATCH --partition=regular
 
 # Check number of arguments
