@@ -7,7 +7,6 @@
 suppressMessages({
   library(optparse)
   library(iwABC)
-  library(parallel)
 })
 
 DAISIE::DAISIE_IW_num_threads(1)
@@ -21,15 +20,14 @@ run_1 <- function(sim, rep, outdir, sim_list) {
   set.seed(seed_mle)
   outfile <- file.path(outdir, sprintf("%.4d.txt", rep))
   if (!file.exists(outfile)) {
-    cat(outfile, "\n")
     out <- iwABC::get_MLE(the_sim[[1]], pars_use = param)
-#    write.table(as.data.frame(out), file = outfile)
+    write.table(as.data.frame(out), file = outfile)
   }
 }
 
 # 1. parse args ------------------------------------------------------------
 option_list <- list(
-  make_option(c("--idx"),  type="integer"),    # array idx
+  make_option(c("--idx"),  type="integer"),    # SLURM array idx
   make_option(c("--ofs"),  type="integer"),
   make_option(c("--outdir"))
 )

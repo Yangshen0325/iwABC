@@ -1,4 +1,4 @@
-out <- "~/iwABC/data/mle_dry"
+out <- "~/iwABC/data/num_cycles5"
 
 all_reps <- c();
 for (sim in 1:48) {
@@ -7,8 +7,11 @@ for (sim in 1:48) {
   reps <- sapply(done, function(x) as.integer(substr(x, 1, 4)))
   reps <- (sim * 10000) + setdiff(1:1000, reps)
   reps <- sample(reps)
-  all_reps <- c(all_reps, reps[1:min(length(reps), 100)])
-  cat(length(reps), "\n")
+  nreps <- min(length(reps), 100 - length(done));
+  if (nreps > 0) {
+    all_reps <- c(all_reps, reps[1:nreps])
+  }
+  cat(length(reps[1:min(length(reps), 100)]), " ", length(done), " ", max(0, nreps), "\n")
 }
 all_reps <- sample(all_reps)
 s <- as.integer(all_reps / 10000)
