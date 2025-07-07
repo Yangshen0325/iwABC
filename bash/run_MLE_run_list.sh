@@ -3,11 +3,11 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
-#SBATCH --job-name=MLE_df_run_list
+#SBATCH --job-name=MLE_run_list
 #SBATCH --mem=4GB
 #SBATCH --partition=regulars
-#SBATCH --array=1-79
-#SBATCH --output=~/iwABC/logs/MLE_df_run_list.log
+#SBATCH --array=1-31
+#SBATCH --output=~/iwABC/logs/MLE_run_list.log
 
 module load R-bundle-CRAN/2023.12-foss-2023a
 
