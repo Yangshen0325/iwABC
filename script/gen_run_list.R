@@ -11,9 +11,10 @@ for (sim in 1:48) {
   if (nreps > 0) {
     all_reps <- c(all_reps, reps[1:nreps])
   }
-  cat(length(reps[1:min(length(reps), 100)]), " ", length(done), " ", max(0, nreps), "\n")
+  #cat(length(reps[1:min(length(reps), 100)]), " ", length(done), " ", max(0, nreps), "\n")
+  cat(length(reps), " ", length(done), " ", max(0, nreps), "\n")
 }
 all_reps <- sample(all_reps)
 s <- as.integer(all_reps / 10000)
 r <- all_reps - (s * 10000)
-save(all_reps, file = "~/iwABC/script/run_list.Rdata")
+#save(all_reps, file = "~/iwABC/script/run_list.Rdata")
