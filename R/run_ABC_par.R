@@ -25,8 +25,8 @@ run_ABC_par <- function(param_set,
                         #start_of_file_name){
 
   # Read data, use file.path() to make them system-independent:
-  param_space <- utils::read.csv("~/iwABCdata/parameter_space_rep100_large_k.csv")
-  iw_observations <- readRDS("~/iwABCdata/iw_observations_onlyABC.rds")
+  param_space <- utils::read.csv("~/iwABCdata/parameter_space_rep100_large_k_first10.csv")
+  iw_observations <- readRDS("~/iwABCdata/iw_observations_onlyABC_first10.rds")
 
   iw_observations <- lapply(iw_observations, "[[", 1)
   # set seed and print out
