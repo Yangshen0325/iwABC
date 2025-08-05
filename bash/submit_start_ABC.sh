@@ -20,7 +20,7 @@ idparsopt_gam=$4
 idparsopt_laa=$5
 ss_set=$6
 
-for (( param_set = 1; param_set <= 320; param_set++ ))
+for (( param_set = 1; param_set <= 64; param_set++ ))
 do
   echo "Submitting job for parameter set ${param_set}..."
   sbatch ~/iwABC/bash/start_ABC.sh \
