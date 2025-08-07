@@ -17,7 +17,7 @@ idparsopt_all <- c(idparsopt_lac, idparsopt_mu, idparsopt_K, idparsopt_gam, idpa
 
 idparsopt <- idparsopt_all #which(idparsopt_all == 1)
 
-saveOrNot <- TRUE
+saveOrNot <- FALSE
 
 metadata <- paste0("This is parameter set ", param_set)
 
