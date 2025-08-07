@@ -24,20 +24,18 @@ run_ABC_par <- function(param_set,
                         num_threads = 1) {
                         #start_of_file_name){
 
-  # Read data, use file.path() to make them system-independent:
-  param_space <- utils::read.csv("~/iwABCdata/parameter_space_rep100_large_k_first2.csv")
-  iw_observations <- readRDS("~/iwABCdata/iw_observations_onlyABC_first2.rds")
+  # Read corresponding parameter space and observations
+  param_space <- file.path("~/iwABCdata/single_pars", paste0("onlyABC_large_k_pars_", param_set, ".rds"))
+  iw_observations  <- file.path("~/iwABCdata/single_data", paste0("onlyABC_large_k_obs_", param_set, ".rds"))
 
-  iw_observations <- lapply(iw_observations, "[[", 1)
+  obs_sim_pars <- readRDS(param_space)
+  obs_sim <- readRDS(iw_observations)
+
   # set seed and print out
   seed <- as.integer(Sys.time()) %% 1000000L * param_set
   set.seed(seed)
   message("Running param set: ", param_set)
   message("seed: ", seed)
-
-  # Extract the parameters and corresponding simulated(observed/empirical) data
-  obs_sim_pars <- param_space[param_set, ]
-  obs_sim <- iw_observations[[param_set]]
 
   # Choose the summary statistics set
   if(ss_set == 0){ # all
