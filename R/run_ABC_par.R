@@ -21,9 +21,10 @@ run_ABC_par <- function(param_set,
                         sigma = 0.05,
                         stop_rate = 1e-7,
                         saveOrNot = FALSE,
-                        num_threads = 1,
                         prior_generating_function,
-                        prior_density_function) {
+                        prior_density_function,
+                        resume_from    = resume_from,
+                        checkpoint_path= checkpoint_path) {
                         #start_of_file_name){
 
   # Read corresponding parameter space and summary stats of observed data
