@@ -206,9 +206,9 @@ ABC_SMC_iw_par <- function(
           # Calculate the weight
           if (i > 1L) {
             accepted_weight <- calc_weight(
-              previous_weights = previous_weights,
-              previous_params  = previous_params,
-              parameters       = res[[l]]$parameters,
+              weights = previous_weights,
+              particles  = previous_params,
+              current       = res[[l]]$parameters,
               sigma_temp       = sigma_temp,
               prior_density_function = prior_density_function,
               idparsopt        = idparsopt
