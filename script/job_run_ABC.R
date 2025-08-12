@@ -41,15 +41,19 @@ idparsopt_all <- c(idparsopt_lac, idparsopt_mu, idparsopt_K, idparsopt_gam, idpa
 
 idparsopt <- idparsopt_all #which(idparsopt_all == 1)
 
+if (length(idparsopt) == 0) {
+  stop("No parameters selected to optimize (all flags were 0).")
+}
+
 library(iwABC)
 
 saveOrNot <- TRUE
 
 iwABC::run_ABC_par(
-  param_set = as.numeric(args[1]),
-  idparsopt = as.numeric(idparsopt),
+  param_set = param_set,
+  idparsopt = idparsopt,
   saveOrNot = saveOrNot,
-  ss_set = 0,
+  ss_set = ss_set,
   number_of_particles = 500,
   num_iterations = 10,
   stop_rate = 1e-7,

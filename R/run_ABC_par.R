@@ -23,13 +23,13 @@ run_ABC_par <- function(param_set,
                         saveOrNot = FALSE,
                         prior_generating_function,
                         prior_density_function,
-                        resume_from    = resume_from,
-                        checkpoint_path= checkpoint_path) {
+                        resume_from    = 0,
+                        checkpoint_path= NULL) {
                         #start_of_file_name){
 
   # Read corresponding parameter space and summary stats of observed data
-  param_space <- file.path("~/iwABCdata/single_pars", paste0("onlyABC_large_k_pars_", param_set, ".rds"))
-  obs_ss_data  <- file.path("~/iwABCdata/single_obs_ss", paste0("obs_ss_", param_set, ".rds"))
+  param_space <- file.path("data/single_pars", paste0("onlyABC_large_k_pars_", param_set, ".rds"))
+  obs_ss_data  <- file.path("data/single_obs_ss", paste0("obs_ss_", param_set, ".rds"))
 
   obs_sim_pars <- readRDS(param_space)
   obs_sim_ss <- readRDS(obs_ss_data)
@@ -57,7 +57,7 @@ run_ABC_par <- function(param_set,
 
     # Run this when it's ABC only!!!! island age is 20, K is 100 and 1000
     init_epsilon <- c(50,   # 1 num_nonend,
-                      50,   # 2 num_sington,
+                      50,   # 2 num_singleton,
                       1000,  # 3 num_multi,
                       100,   # 4 nonend_nltt,
                       200,   # 5 singleton_nltt,
@@ -74,6 +74,23 @@ run_ABC_par <- function(param_set,
     stop("Invalid value for ss_set. Only 0 and 1 are supported.") # will have more options in the future
   }
 
+  if (length(init_epsilon) != length(obs_sim_ss)) {
+    stop(sprintf("Length mismatch: init_epsilon=%d vs obs_sim_ss=%d",
+                 length(init_epsilon), length(obs_sim_ss)))
+  }
+
+  # if they have names, align & warn on mismatch (optional but helpful)
+  if (!is.null(names(obs_sim_ss)) && !is.null(names(init_epsilon))) {
+    common <- intersect(names(obs_sim_ss), names(init_epsilon))
+    if (length(common) != length(obs_sim_ss)) {
+      warning("Names of obs_sim_ss and init_epsilon differ; aligning on intersection.")
+      obs_sim_ss   <- obs_sim_ss[common]
+      init_epsilon <- init_epsilon[common]
+    }
+  }
+
+  print_frequency <- max(1L, min(print_frequency, number_of_particles))
+
   # Run ABC-SMC
   abc <- ABC_SMC_iw_par(obs_data_ss = obs_sim_ss,
                     init_epsilon_values = init_epsilon,
@@ -89,6 +106,7 @@ run_ABC_par <- function(param_set,
                     idparsopt = idparsopt,
                     pars = as.numeric(obs_sim_pars[1:5]),
                     ss_set = ss_set,
+                    param_set = param_set,
                     enable_checkpoint       = TRUE,
                     checkpoint_dir          = sprintf("checkpoints_set_%04d", param_set),
                     resume_from             = resume_from,         # <- pass through a number or keep default 0

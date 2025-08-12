@@ -98,10 +98,23 @@ ABC_SMC_iw_par <- function(
     previous_params  <- ck$previous_params
     previous_weights <- ck$previous_weights
     ss_diff_list     <- ck$ss_diff_list
-    n_iter           <- ck$iter_completed
+    sim_seed_list  <- ck$sim_seed_list
+
+    # normalize weights & sanity
+    if (!length(previous_weights) ||
+        length(previous_weights) != length(previous_params) ||
+        any(!is.finite(previous_weights)) || sum(previous_weights) <= 0) {
+      previous_weights <- rep(1/length(previous_params), length(previous_params))
+    } else {
+      previous_weights <- previous_weights / sum(previous_weights)
+    }
+
+    resuming_now <- TRUE
+    n_iter       <- ck$iter_completed
     message(sprintf("[ABC] Resumed from iter %d using %s", ck$iter_completed, checkpoint_path))
   } else {
     i_start <- 1L
+    resuming_now <- FALSE
   }
 
   # checkpoint directory
@@ -129,16 +142,26 @@ ABC_SMC_iw_par <- function(
 
     # Reset `new_weight` and `new_params`
     if (i > 1L) {
-      #normalize the weights and store them as previous weights.
-      previous_weights <- new_weights / sum(new_weights)
-      new_weights <- c() #remove all currently stored weights
-      previous_params <- new_params #store found params
-      new_params <- list() #clear new params
+      if (resuming_now && i == i_start) {
+        # keep restored previous_* as-is
+      } else {
+        sw <- sum(new_weights)
+        if (!length(new_weights) || !is.finite(sw) || sw <= 0) {
+          # fallback: uniform weights across accepted new_params
+          previous_weights <- rep(1 / length(new_params), length(new_params))
+        } else {
+          previous_weights <- new_weights / sw
+        }
+        new_weights <- c()
+        previous_params <- new_params
+        new_params <- list()
+      }
     }
 
     stoprate_reached <- FALSE
     tried <- 0L
     number_accepted <- 0L
+    sim_seed <- integer(0)
 
     while (number_accepted < number_of_particles) {
 
@@ -162,8 +185,11 @@ ABC_SMC_iw_par <- function(
 
           # Sample an index from the previous weights, and use the corresponding parameters as a baseline
       #    index <- sample(x = indices, size = 1, prob = previous_weights)
-
+         if (i > 1L) {
+           indices <- seq_len(length(previous_params))
+         }
           random_indices <- sample(x = indices, size = block_size, prob = previous_weights, replace = TRUE)
+
           for (np in 1:block_size) {
             local_parameters <- previous_params[[random_indices[np]]]
             local_parameters[idparsopt] <- exp(
@@ -200,7 +226,7 @@ ABC_SMC_iw_par <- function(
           ss_diff[number_accepted, ] <- unlist(res[[l]]$df_stats)
 
           # Store the seed used for simulation
-          sim_seed_list[[number_accepted]] <- res[[l]]$sim_seed
+          sim_seed[number_accepted] <- res[[l]]$sim_seed
 
           accepted_weight <- 1
           # Calculate the weight
@@ -217,10 +243,9 @@ ABC_SMC_iw_par <- function(
           new_weights[number_accepted] <- accepted_weight
 
           # Print(**) out every certain number of particles, showing the progress on screen
-          if ((number_accepted) %%
-              (number_of_particles / print_frequency) == 0) {
-            cat("**")
-            utils::flush.console()
+          chunk <- max(1L, floor(number_of_particles / print_frequency))
+          if ((number_accepted %% chunk) == 0L) {
+            cat("**"); utils::flush.console()
           }
         }
         if (number_accepted >= number_of_particles) break
@@ -241,6 +266,7 @@ ABC_SMC_iw_par <- function(
 
 
     ss_diff_list[[i]] <- ss_diff
+    sim_seed_list[[i]] <- sim_seed
 
     # Update the epsilon values for the next iteration
     if (!stoprate_reached) {
@@ -258,8 +284,6 @@ ABC_SMC_iw_par <- function(
 
     ABC_list[[i]] <- do.call(rbind, new_params)
     message("tried times: ", tried)
- }
-# Check point -------------------------------------------------------------
 
 
     if (enable_checkpoint) {
@@ -270,12 +294,12 @@ ABC_SMC_iw_par <- function(
       }
       checkpoint <- list(
         iter_completed  = i,
-        ABC        = ABC_list,
+        ABC_list        = ABC_list,
         epsilon         = epsilon,
         previous_params = new_params,
         previous_weights= new_weights,
         ss_diff_list    = ss_diff_list,
-        ss_seed_list = sim_seed_list
+        sim_seed_list = sim_seed_list
       )
       saveRDS(checkpoint, fn)
     }
@@ -284,6 +308,7 @@ ABC_SMC_iw_par <- function(
       message(sprintf("[ABC] Early stop at iter %d (accept rate < stop_rate).", i))
       break
     }
+ }
 
     output <- list(
       ABC      = ABC_list,

@@ -14,9 +14,10 @@ run_ABC_par(
   sigma = 0.05,
   stop_rate = 1e-07,
   saveOrNot = FALSE,
-  num_threads = 1,
   prior_generating_function,
-  prior_density_function
+  prior_density_function,
+  resume_from = 0,
+  checkpoint_path = NULL
 )
 }
 \arguments{

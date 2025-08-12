@@ -8,6 +8,9 @@
 #SBATCH --mem=50GB
 #SBATCH --partition=regular
 
+# Ensure log directory exists (avoids 'No such file or directory' on some systems)
+mkdir -p logs
+
 # Check number of arguments
 if [ $# -ne 7 ]; then
   echo "Usage: sbatch start_ABC.sh <param_set> <lac> <mu> <K> <gam> <laa> <ss_set>"
