@@ -209,7 +209,7 @@ ABC_SMC_iw_par <- function(
               weights = previous_weights,
               particles  = previous_params,
               current       = res[[l]]$parameters,
-              sigma_temp       = sigma_temp,
+              sigma      = sigma_temp,
               prior_density_function = prior_density_function,
               idparsopt        = idparsopt
             )
