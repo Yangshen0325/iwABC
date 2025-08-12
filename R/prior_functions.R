@@ -2,7 +2,7 @@
 #'
 #' @return Density of the given parameter set
 #' @export
-prior_dens <- function(pars, idparsopt) {
+prior_dens_onlyABC <- function(pars, idparsopt) {
 
   if(1 %in% idparsopt){
     dens_lac <- stats::dunif(pars[1], 0, 1)
@@ -42,7 +42,7 @@ prior_dens <- function(pars, idparsopt) {
 #'
 #' @return a vector of parameters
 #' @export
-prior_gen <- function(pars,idparsopt){
+prior_gen_onlyABC <- function(pars,idparsopt){
 
   if(1 %in% idparsopt){
     lac <- stats::runif(1, 0, 1)

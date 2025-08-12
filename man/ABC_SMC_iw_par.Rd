@@ -5,28 +5,33 @@
 \title{ABC approach to estimate parameters in IW.}
 \usage{
 ABC_SMC_iw_par(
-  obs_data,
-  calc_ss_function,
+  obs_data_ss,
   init_epsilon_values,
   prior_generating_function,
   prior_density_function,
   number_of_particles,
   print_frequency,
   sigma,
+  sigma_decay = 0.25,
+  sigma_floor = 0.02,
   stop_rate,
   num_iterations,
   idparsopt,
   pars,
   ss_set,
-  num_threads = 1
+  param_set,
+  enable_checkpoint = TRUE,
+  checkpoint_dir = "checkpoints",
+  resume_from = 0,
+  checkpoint_path = NULL,
+  eps_q_early = 0.9,
+  eps_q_mid = 0.8,
+  eps_q_late = 0.75,
+  eps_switch1 = 3,
+  eps_switch2 = 6
 )
 }
 \arguments{
-\item{obs_data}{A list of simulation output as observation.}
-
-\item{calc_ss_function}{A function to calculate summary statistic distance
-between simulated and observed data.}
-
 \item{init_epsilon_values}{A vector of initial epsilon values.}
 
 \item{prior_generating_function}{Function to generate parameters from the
@@ -47,6 +52,11 @@ are fixed.}
 
 \item{ss_set}{A numeric indicates which set of summary statistics that
 are used to calculate the distance.}
+
+\item{obs_data}{A list of simulation output as observation.}
+
+\item{calc_ss_function}{A function to calculate summary statistic distance
+between simulated and observed data.}
 
 \item{num_threads}{number of threads
 @export}

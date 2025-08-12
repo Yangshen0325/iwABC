@@ -15,21 +15,23 @@
 run_ABC_par <- function(param_set,
                         idparsopt,
                         ss_set = 0,
-                        number_of_particles = 100,
-                        num_iterations = 20,
+                        number_of_particles = 500,
+                        num_iterations = 10,
                         print_frequency = 20,
                         sigma = 0.05,
-                        stop_rate = 1e-5,
-                        saveOrNot = TRUE,
-                        num_threads = 1) {
+                        stop_rate = 1e-7,
+                        saveOrNot = FALSE,
+                        num_threads = 1,
+                        prior_generating_function,
+                        prior_density_function) {
                         #start_of_file_name){
 
-  # Read corresponding parameter space and observations
+  # Read corresponding parameter space and summary stats of observed data
   param_space <- file.path("~/iwABCdata/single_pars", paste0("onlyABC_large_k_pars_", param_set, ".rds"))
-  iw_observations  <- file.path("~/iwABCdata/single_data", paste0("onlyABC_large_k_obs_", param_set, ".rds"))
+  obs_ss_data  <- file.path("~/iwABCdata/single_obs_ss", paste0("obs_ss_", param_set, ".rds"))
 
   obs_sim_pars <- readRDS(param_space)
-  obs_sim <- readRDS(iw_observations)
+  obs_sim_ss <- readRDS(obs_ss_data)
 
   # set seed and print out
   seed <- as.integer(Sys.time()) %% 1000000L * param_set
@@ -72,21 +74,24 @@ run_ABC_par <- function(param_set,
   }
 
   # Run ABC-SMC
-  abc <- ABC_SMC_iw_par(obs_data = obs_sim,
-                    calc_ss_function = calc_ss_iw,
+  abc <- ABC_SMC_iw_par(obs_data_ss = obs_sim_ss,
                     init_epsilon_values = init_epsilon,
-                    prior_generating_function = prior_gen,
-                    prior_density_function = prior_dens,
+                    prior_generating_function = prior_generating_function,
+                    prior_density_function = prior_density_function,
                     number_of_particles = number_of_particles,
                     print_frequency = print_frequency,
                     sigma = sigma,
+                    sigma_decay             = 0.25,
+                    sigma_floor             = 0.02,
                     stop_rate = stop_rate,
                     num_iterations = num_iterations,
                     idparsopt = idparsopt,
                     pars = as.numeric(obs_sim_pars[1:5]),
                     ss_set = ss_set,
-                    num_threads = num_threads)
-                    #start_of_file_name = start_of_file_name)
+                    enable_checkpoint       = TRUE,
+                    checkpoint_dir          = sprintf("checkpoints_set_%04d", param_set),
+                    resume_from             = resume_from,         # <- pass through a number or keep default 0
+                    checkpoint_path         = checkpoint_path )     # <- NULL normally; set if you resume from a custom file
 
   if(saveOrNot == TRUE){
     save_output(output = abc,

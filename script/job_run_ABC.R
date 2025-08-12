@@ -13,16 +13,37 @@ idparsopt_gam <- as.numeric(args[5])
 idparsopt_laa <- as.numeric(args[6])
 ss_set <- as.numeric(args[7])
 
+## --- Auto-detect latest checkpoint for this param_set ---
+checkpoint_dir  <- sprintf("checkpoints_set_%04d", param_set)
+resume_from     <- 0
+checkpoint_path <- NULL
+
+if (dir.exists(checkpoint_dir)) {
+  # files like: chk_set0012_iter08.rds
+  pats <- sprintf("^chk_set%04d_iter(\\d{2})\\.rds$", param_set)
+  files <- list.files(checkpoint_dir, pattern = pats, full.names = TRUE)
+  if (length(files) > 0) {
+    # extract iteration numbers
+    iters <- as.integer(sub(sprintf("^.*chk_set%04d_iter(\\d{2})\\.rds$", param_set), "\\1", files))
+    last_idx <- which.max(iters)
+    resume_from     <- iters[last_idx]     # e.g. 8  → will continue at 9
+    checkpoint_path <- files[last_idx]
+    message(sprintf("[AUTO-RESUME] Found checkpoint: iter %d at %s",
+                    resume_from, checkpoint_path))
+  } else {
+    message("[AUTO-RESUME] No checkpoint files found; starting from iter 1.")
+  }
+} else {
+  message("[AUTO-RESUME] No checkpoint dir; starting from iter 1.")
+}
+
 idparsopt_all <- c(idparsopt_lac, idparsopt_mu, idparsopt_K, idparsopt_gam, idparsopt_laa)
 
 idparsopt <- idparsopt_all #which(idparsopt_all == 1)
 
-saveOrNot <- FALSE
-
-metadata <- paste0("This is parameter set ", param_set)
-
-
 library(iwABC)
+
+saveOrNot <- TRUE
 
 iwABC::run_ABC_par(
   param_set = as.numeric(args[1]),
@@ -31,9 +52,15 @@ iwABC::run_ABC_par(
   ss_set = 0,
   number_of_particles = 500,
   num_iterations = 10,
-  num_threads = 1,
-  stop_rate = 1e-7
-  #start_of_file_name = paste0("set_", param_set, "_", ss_set, "_")
+  stop_rate = 1e-7,
+
+  # prior functions
+  prior_generating_function = prior_gen_onlyABC,
+  prior_density_function = prior_dens_onlyABC,
+
+  # NEW: pass resume controls through
+  resume_from    = resume_from,
+  checkpoint_path= checkpoint_path
 )
 
 

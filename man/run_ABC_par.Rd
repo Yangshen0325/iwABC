@@ -8,13 +8,15 @@ run_ABC_par(
   param_set,
   idparsopt,
   ss_set = 0,
-  number_of_particles = 100,
-  num_iterations = 20,
+  number_of_particles = 500,
+  num_iterations = 10,
   print_frequency = 20,
   sigma = 0.05,
-  stop_rate = 1e-05,
-  saveOrNot = TRUE,
-  num_threads = 1
+  stop_rate = 1e-07,
+  saveOrNot = FALSE,
+  num_threads = 1,
+  prior_generating_function,
+  prior_density_function
 )
 }
 \arguments{
