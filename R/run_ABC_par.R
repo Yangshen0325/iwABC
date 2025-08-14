@@ -28,8 +28,8 @@ run_ABC_par <- function(param_set,
                         #start_of_file_name){
 
   # Read corresponding parameter space and summary stats of observed data
-  param_space <- file.path("data/single_pars", paste0("onlyABC_large_k_pars_", param_set, ".rds"))
-  obs_ss_data  <- file.path("data/single_obs_ss", paste0("obs_ss_", param_set, ".rds"))
+  param_space <- file.path("~/iwABCdata/single_pars", paste0("onlyABC_large_k_pars_", param_set, ".rds"))
+  obs_ss_data  <- file.path("~/iwABCdata/single_obs_ss", paste0("obs_ss_", param_set, ".rds"))
 
   obs_sim_pars <- readRDS(param_space)
   obs_sim_ss <- readRDS(obs_ss_data)
