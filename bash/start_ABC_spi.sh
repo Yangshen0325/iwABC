@@ -4,7 +4,7 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1      #
 #SBATCH --job-name=job_run_ABC_spi
-#SBATCH --output=logs/ABC_spi-%j.log
+#SBATCH --output=logs2/ABC_spi-%j.log
 #SBATCH --mem=10GB
 #SBATCH --partition=regular
 

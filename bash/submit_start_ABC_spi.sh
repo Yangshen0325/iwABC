@@ -3,7 +3,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --job-name=start_ABC_spi
-#SBATCH --output=logs/start_ABC_spi-%j.log
+#SBATCH --output=logs2/start_ABC_spi-%j.log
 #SBATCH --mem=1GB
 #SBATCH --partition=regular
 
