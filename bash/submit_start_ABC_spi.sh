@@ -27,6 +27,7 @@ ss_set=$6
 GROUP_SIZE=${GROUP_SIZE:-100}   # how many reps per parameter combo
 NUM_GROUPS=${NUM_GROUPS:-48}    # how many parameter combos
 REPS_PER_GROUP=${REPS_PER_GROUP:-2}  # test first N reps from each group (set to 10 later if you want)
+START_OFFSET=${START_OFFSET:-0}   # <--- NEW: how many reps to skip at the start of each group
 # --------------------------
 
 # Optional: sanity clamp
@@ -36,11 +37,21 @@ if (( REPS_PER_GROUP > GROUP_SIZE )); then
 fi
 
 # Loop over groups (0..NUM_GROUPS-1), then the first REPS_PER_GROUP reps (1..N)
+# Optional: sanity clamp
+if (( REPS_PER_GROUP > GROUP_SIZE )); then
+  echo "REPS_PER_GROUP ($REPS_PER_GROUP) cannot exceed GROUP_SIZE ($GROUP_SIZE)." >&2
+  exit 1
+fi
+
 for (( g=0; g<NUM_GROUPS; g++ )); do
   base=$(( g * GROUP_SIZE ))   # 0, 100, 200, ...
   for (( r=1; r<=REPS_PER_GROUP; r++ )); do
-    param_set=$(( base + r ))  # 1,2 then 101,102 then 201,202, ...
-    echo "Submitting job for parameter set ${param_set} (group $((g+1)) rep ${r})..."
+    rep=$(( r + START_OFFSET ))                 # <--- NEW: shift the rep start
+    if (( rep < 1 || rep > GROUP_SIZE )); then  # <--- NEW: guard
+      continue
+    fi
+    param_set=$(( base + rep ))  # 3..100 when START_OFFSET=2
+    echo "Submitting job for parameter set ${param_set} (group $((g+1)) rep ${rep})..."
     sbatch ~/iwABC/bash/start_ABC_spi.sh \
            "${param_set}" \
            "${idparsopt_lac}" \
