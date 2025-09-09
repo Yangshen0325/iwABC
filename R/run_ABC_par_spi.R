@@ -41,7 +41,8 @@ run_ABC_par_spi <- function(param_set,
   }
 
   # set seed and print out
-  seed <- as.integer(Sys.time()) %% 1000000L * param_set
+  seed <- (sample.int(.Machine$integer.max, 1L) + param_set) %% .Machine$integer.max
+  if (seed == 0L) seed <- 1L
   set.seed(seed)
   message("Running param set: ", param_set)
   message("seed: ", seed)
