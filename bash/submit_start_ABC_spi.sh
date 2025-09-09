@@ -6,38 +6,32 @@
 #SBATCH --output=logs2/start_ABC_spi-%j.log
 #SBATCH --mem=1GB
 #SBATCH --partition=regular
+#SBATCH --export=ALL   # <-- ensure env vars like START_OFFSET pass through
 
 set -euo pipefail
 mkdir -p logs2
 
 # Arguments: lac mu K gam laa ss_set
 if [ $# -ne 6 ]; then
-  echo "Usage: sbatch submit_start_ABC.sh <lac> <mu> <K> <gam> <laa> <ss_set>"
+  echo "Usage: sbatch submit_start_ABC_spi.sh <lac> <mu> <K> <gam> <laa> <ss_set>"
   exit 1
 fi
 
-idparsopt_lac=$1
-idparsopt_mu=$2
-idparsopt_K=$3
-idparsopt_gam=$4
-idparsopt_laa=$5
-ss_set=$6
+idparsopt_lac="$1"
+idparsopt_mu="$2"
+idparsopt_K="$3"
+idparsopt_gam="$4"
+idparsopt_laa="$5"
+ss_set="$6"
 
 # --- CONFIGURABLE KNOBS ---
-GROUP_SIZE=${GROUP_SIZE:-100}   # how many reps per parameter combo
-NUM_GROUPS=${NUM_GROUPS:-48}    # how many parameter combos
-REPS_PER_GROUP=${REPS_PER_GROUP:-2}  # test first N reps from each group (set to 10 later if you want)
-START_OFFSET=${START_OFFSET:-0}   # <--- NEW: how many reps to skip at the start of each group
+GROUP_SIZE=${GROUP_SIZE:-100}
+NUM_GROUPS=${NUM_GROUPS:-48}
+REPS_PER_GROUP=${REPS_PER_GROUP:-2}
+START_OFFSET=${START_OFFSET:-0}    # how many reps to skip at start of each group
 # --------------------------
+echo "[SPI SUBMIT] GROUP_SIZE=${GROUP_SIZE} NUM_GROUPS=${NUM_GROUPS} START_OFFSET=${START_OFFSET} REPS_PER_GROUP=${REPS_PER_GROUP}"
 
-# Optional: sanity clamp
-if (( REPS_PER_GROUP > GROUP_SIZE )); then
-  echo "REPS_PER_GROUP ($REPS_PER_GROUP) cannot exceed GROUP_SIZE ($GROUP_SIZE)." >&2
-  exit 1
-fi
-
-# Loop over groups (0..NUM_GROUPS-1), then the first REPS_PER_GROUP reps (1..N)
-# Optional: sanity clamp
 if (( REPS_PER_GROUP > GROUP_SIZE )); then
   echo "REPS_PER_GROUP ($REPS_PER_GROUP) cannot exceed GROUP_SIZE ($GROUP_SIZE)." >&2
   exit 1
@@ -46,11 +40,11 @@ fi
 for (( g=0; g<NUM_GROUPS; g++ )); do
   base=$(( g * GROUP_SIZE ))   # 0, 100, 200, ...
   for (( r=1; r<=REPS_PER_GROUP; r++ )); do
-    rep=$(( r + START_OFFSET ))                 # <--- NEW: shift the rep start
-    if (( rep < 1 || rep > GROUP_SIZE )); then  # <--- NEW: guard
+    rep=$(( r + START_OFFSET ))            # <-- shift
+    if (( rep < 1 || rep > GROUP_SIZE )); then
       continue
     fi
-    param_set=$(( base + rep ))  # 3..100 when START_OFFSET=2
+    param_set=$(( base + rep ))            # <-- use rep here
     echo "Submitting job for parameter set ${param_set} (group $((g+1)) rep ${rep})..."
     sbatch ~/iwABC/bash/start_ABC_spi.sh \
            "${param_set}" \
