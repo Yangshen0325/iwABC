@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --time=1-00:00:00
+#SBATCH --time=3-00:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1      #
@@ -13,7 +13,7 @@ mkdir -p logs2
 
 # Check number of arguments
 if [ $# -ne 7 ]; then
-  echo "Usage: sbatch start_ABC.sh <param_set> <lac> <mu> <K> <gam> <laa> <ss_set>"
+  echo "Usage: sbatch start_ABC_spi.sh <param_set> <lac> <mu> <K> <gam> <laa> <ss_set>"
   exit 1
 fi
 
