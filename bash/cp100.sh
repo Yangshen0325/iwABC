@@ -14,6 +14,6 @@ cd "$1"
 for d in */; do
     if [ 100 -eq `ls -l $1$d*.txt | wc -l` ]; then
         echo "$1$d"
-        cp -r "$1$d" "$2/$d"
+#        cp -r "$1$d" "$2/$d"
     fi
 done
