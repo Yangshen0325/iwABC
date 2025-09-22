@@ -1,6 +1,7 @@
+# the output folder
 out <- "~/iwABC/data/num_cycles5"
 
-all_reps <- c();
+todo_reps <- c();
 for (sim in 1:48) {
   outdir <- file.path(out, sprintf("%.2d", sim))
   done <- list.files(outdir, pattern = ".txt", all.files = FALSE, recursive = FALSE)
@@ -9,11 +10,9 @@ for (sim in 1:48) {
   reps <- sample(reps)
   nreps <- min(length(reps), 100 - length(done));
   if (nreps > 0) {
-    all_reps <- c(all_reps, reps[1:nreps])
+    todo_reps <- c(todo_reps, reps[1:nreps])
   }
 }
-all_reps <- sample(all_reps)
-s <- as.integer(all_reps / 10000)
-r <- all_reps - (s * 10000)
-cat("to do: ", length(r), "\n")
-save(all_reps, file = "~/iwABC/script/run_list.Rdata")
+todo_reps <- sample(todo_reps)
+cat("to do: ", length(todo_reps), "\n")
+save(todo_reps, file = "~/iwABC/script/run_list.Rdata")
