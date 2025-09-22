@@ -1,5 +1,5 @@
 # the output folder
-out <- "~/iwABC/data/num_cycles5"
+out <- "~/iwABC/data/num_cycles5_test"
 
 todo_reps <- c();
 for (sim in 1:48) {
