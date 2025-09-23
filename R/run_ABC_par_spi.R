@@ -115,7 +115,7 @@ run_ABC_par_spi <- function(param_set,
                         ss_set = ss_set,
                         param_set = param_set,
                         enable_checkpoint       = TRUE,
-                        checkpoint_dir          = sprintf("checkpoints_spi_set_%04d", param_set),
+                        checkpoint_dir          = file.path("newSimABC_spi", sprintf("checkpoints_spi_set_%04d", param_set)),
                         resume_from             = resume_from,         # <- pass through a number or keep default 0
                         checkpoint_path         = checkpoint_path )     # <- NULL normally; set if you resume from a custom file
 
