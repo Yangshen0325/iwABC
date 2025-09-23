@@ -49,8 +49,8 @@ ABC_SMC_iw_par_spi <- function(
     eps_q_early          = 0.90,
     eps_q_mid            = 0.80,
     eps_q_late           = 0.75,
-    eps_switch1          = 3,           # i <= 3 use eps_q_early
-    eps_switch2          = 6            # 3 < i <= 6 use eps_q_mid
+    eps_switch1          = 5,           # i <= 5 use eps_q_early
+    eps_switch2          = 15            # 5 < i <= 15 use eps_q_mid
     #
     # num_threads = 1
 ) {
@@ -339,7 +339,7 @@ process_particle <- function(par_values,
   sim_seed <- sample(1:1000000, 1)
   set.seed(sim_seed)
   # Simulate a new tree, given the proposed parameters. Using DAISIE IW model!!!
-  new_sim <- DAISIE::DAISIE_sim_cr(
+  new_sim <- DAISIEiwsim::DAISIE_sim_cr(
     time = 5,
     M = 1000,
     pars = as.numeric(c(par_values[1], par_values[2], par_values[3], par_values[4], par_values[5])),
@@ -349,8 +349,10 @@ process_particle <- function(par_values,
     sample_freq  = Inf,
     plot_sims = FALSE,
     verbose = FALSE,
-    cond = 1
+    cond = 1,
+    rcpp = TRUE
   )
+
 
   # Calculate the summary statistics for the simulated tree
   new_sim_ss <- calc_all_stats(sim = new_sim[[1]])
