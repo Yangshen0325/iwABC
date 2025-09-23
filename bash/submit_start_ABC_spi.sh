@@ -3,13 +3,13 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --job-name=start_ABC_spi
-#SBATCH --output=logs2/start_ABC_spi-%j.log
+#SBATCH --output=logsNew/start_ABC_spi-%j.log
 #SBATCH --mem=1GB
 #SBATCH --partition=regular
 #SBATCH --export=ALL   # <-- ensure env vars like START_OFFSET pass through
 
 set -euo pipefail
-mkdir -p logs2
+mkdir -p logsNew
 
 # Arguments: lac mu K gam laa ss_set
 if [ $# -ne 6 ]; then
@@ -59,7 +59,7 @@ done
 
 
 # If test for the first 10, then on cluster you can run:
-# REPS_PER_GROUP=10 sbatch bash/submit_start_ABC.sh 1 1 1 1 1 0
+# REPS_PER_GROUP=10 sbatch bash/submit_start_ABC_spi.sh 1 2 3 4 5 0
 
 
 
