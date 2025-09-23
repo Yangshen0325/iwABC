@@ -14,7 +14,7 @@ idparsopt_laa <- as.numeric(args[6])
 ss_set <- as.numeric(args[7])
 
 ## --- Auto-detect latest checkpoint for this param_set ---
-checkpoint_dir  <- sprintf("checkpoints_spi_set_%04d", param_set)
+checkpoint_dir  <- file.path("newSimABC_spi", sprintf("checkpoints_spi_set_%04d", param_set))
 resume_from     <- 0
 checkpoint_path <- NULL
 
@@ -46,6 +46,7 @@ if (length(idparsopt) == 0) {
 }
 
 library(iwABC)
+library(DAISIEiwsim)
 
 saveOrNot <- TRUE
 
@@ -55,7 +56,7 @@ iwABC::run_ABC_par_spi(
   saveOrNot = saveOrNot,
   ss_set = ss_set,
   number_of_particles = 500,
-  num_iterations = 10,
+  num_iterations = 20,
   stop_rate = 1e-7,
 
   # prior functions
