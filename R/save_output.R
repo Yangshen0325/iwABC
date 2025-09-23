@@ -7,7 +7,7 @@ save_output <- function(output,
   output_file_name <- paste0("param_set_", param_set, "_ss_", ss_set, ".rds")
   output_folder <- file.path(
     getwd(),
-    "results"
+    "outNewSimABC_spi"
   )
 
   # Create the folder if it does not exist
