@@ -9,4 +9,4 @@ fi
 # Rscript -e "install.packages(c('optparse', 'devtools', 'DAISIE'), repos='https://cloud.r-project.org')"
 Rscript -e "devtools::install_github('rsetienne/DAISIE', repos = 'https://github.com', ref = 'develop')"
 Rscript -e "devtools::install_github('thijsjanzen/DAISIEiwsim')"
-Rscript -e "devtools::install('~/iwABC')"
+Rscript -e "devtools::install_github('Yangshen0325/iwABC')"
