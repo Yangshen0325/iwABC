@@ -27,8 +27,8 @@ ABC_SMC_iw_par_spi(
   eps_q_early = 0.9,
   eps_q_mid = 0.8,
   eps_q_late = 0.75,
-  eps_switch1 = 3,
-  eps_switch2 = 6
+  eps_switch1 = 5,
+  eps_switch2 = 15
 )
 }
 \arguments{

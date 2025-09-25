@@ -3,13 +3,13 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --job-name=start_ABC_spi
-#SBATCH --output=logsNew/start_ABC_spi-%j.log
+#SBATCH --output=logsFirstTen/start_ABC_spi-%j.log
 #SBATCH --mem=1GB
 #SBATCH --partition=regular
 #SBATCH --export=ALL   # <-- ensure env vars like START_OFFSET pass through
 
 set -euo pipefail
-mkdir -p logsNew
+mkdir -p logsFirstTen
 
 # Arguments: lac mu K gam laa ss_set
 if [ $# -ne 6 ]; then

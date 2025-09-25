@@ -1,15 +1,15 @@
 #!/bin/bash
-#SBATCH --time=4-00:00:00
+#SBATCH --time=5-00:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1      #
 #SBATCH --job-name=job_run_ABC_spi
-#SBATCH --output=logsNew/ABC_spi-%j.log
-#SBATCH --mem=10GB
+#SBATCH --output=logsFirstTen/ABC_spi-%j.log
+#SBATCH --mem=12GB
 #SBATCH --partition=regular
 
 # Ensure log directory exists (avoids 'No such file or directory' on some systems)
-mkdir -p logsNew
+mkdir -p logsFirstTen
 
 # Check number of arguments
 if [ $# -ne 7 ]; then

@@ -14,7 +14,7 @@ idparsopt_laa <- as.numeric(args[6])
 ss_set <- as.numeric(args[7])
 
 ## --- Auto-detect latest checkpoint for this param_set ---
-checkpoint_dir  <- file.path("newSimABC_spi", sprintf("checkpoints_spi_set_%04d", param_set))
+checkpoint_dir  <- file.path("newSimABC_spi_firstTen", sprintf("checkpoints_spi_set_%04d", param_set))
 resume_from     <- 0
 checkpoint_path <- NULL
 
