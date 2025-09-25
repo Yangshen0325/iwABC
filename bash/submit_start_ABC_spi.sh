@@ -4,7 +4,7 @@
 #SBATCH --ntasks=1
 #SBATCH --job-name=start_ABC_spi
 #SBATCH --output=logsFirstTen/start_ABC_spi-%j.log
-#SBATCH --mem=1GB
+#SBATCH --mem=5GB
 #SBATCH --partition=regular
 #SBATCH --export=ALL   # <-- ensure env vars like START_OFFSET pass through
 
@@ -27,7 +27,7 @@ ss_set="$6"
 # --- CONFIGURABLE KNOBS ---
 GROUP_SIZE=${GROUP_SIZE:-100}
 NUM_GROUPS=${NUM_GROUPS:-48}
-REPS_PER_GROUP=${REPS_PER_GROUP:-2}
+REPS_PER_GROUP=${REPS_PER_GROUP:-10}
 START_OFFSET=${START_OFFSET:-0}    # how many reps to skip at start of each group
 # --------------------------
 echo "[SPI SUBMIT] GROUP_SIZE=${GROUP_SIZE} NUM_GROUPS=${NUM_GROUPS} START_OFFSET=${START_OFFSET} REPS_PER_GROUP=${REPS_PER_GROUP}"
