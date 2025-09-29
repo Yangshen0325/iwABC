@@ -31,7 +31,8 @@ for d in "${ROOT}"/checkpoints_spi_set_*; do
   [[ "$b" =~ checkpoints_spi_set_([0-9]+)$ ]] || { echo "[WARN] Skip: $d"; ((count_skip++)); continue; }
   param_set="${BASH_REMATCH[1]}"
 
-  files=( "$d"/chk_spi_set"${param_set}"_iter??.rds )
+  param_pad=$(printf "%04d" "$param_set")
+  files=( "$d"/chk_spi_set${param_pad}_iter??.rds )
   if (( ${#files[@]} == 0 )); then
     echo "[WARN] No checkpoints in $d; skipping."
     ((count_skip++)); continue
@@ -55,8 +56,8 @@ for d in "${ROOT}"/checkpoints_spi_set_*; do
     echo "  sbatch ${START_SCRIPT} ${param_set} ${lac} ${mu} ${K} ${gam} ${laa} ${ss_set}"
   else
     sbatch "${START_SCRIPT}" "${param_set}" "${lac}" "${mu}" "${K}" "${gam}" "${laa}" "${ss_set}" \
-      | tee -a "${LOG_DIR}/resume_submitted.log"
-    sleep 0.1  # small throttle to be nice to scheduler
+      | tee -a "${LOG_DIR}/submitted.log"
+    sleep 0.1
     ((count_sub++))
   fi
 done
