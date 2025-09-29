@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Resume all SPI runs with < 10 iterations by submitting sbatch jobs that auto-resume.
+# Resume all SPI runs with < 20 iterations by submitting sbatch jobs that auto-resume.
 # Usage:
 #   ./resume_failed_spi.sh <lac> <mu> <K> <gam> <laa> <ss_set> [--dry-run]
 
@@ -13,9 +13,10 @@ fi
 lac="$1"; mu="$2"; K="$3"; gam="$4"; laa="$5"; ss_set="$6"
 dry="${7:-}"
 
-ROOT="${HOME}/p302656/iwABC"
-START_SCRIPT="${HOME}/p302656/iwABC/bash/start_ABC_spi.sh"   # <-- SPI launcher
-LOG_DIR="${ROOT}/logs_resume_spi"
+# === Paths ===
+ROOT="${HOME}/p302656/iwABC/newSimABC_spi_firstTen"       # where checkpoint dirs live now
+START_SCRIPT="${HOME}/p302656/iwABC/bash/start_ABC_spi.sh"  # script to launch/resume a single param_set
+LOG_DIR="${HOME}/p302656/iwABC/logsFirstTen"              # logs folder
 mkdir -p "${LOG_DIR}"
 
 [[ -x "${START_SCRIPT}" ]] || { echo "Missing or non-executable: ${START_SCRIPT}" >&2; exit 1; }
@@ -44,7 +45,7 @@ for d in "${ROOT}"/checkpoints_spi_set_*; do
   done
 
   ((count_total++))
-  if (( max_iter >= 10 )); then
+  if (( max_iter >= 20 )); then
     echo "[OK]   set=${param_set} already at iter ${max_iter}; skip."
     ((count_skip++)); continue
   fi
@@ -54,7 +55,7 @@ for d in "${ROOT}"/checkpoints_spi_set_*; do
     echo "  sbatch ${START_SCRIPT} ${param_set} ${lac} ${mu} ${K} ${gam} ${laa} ${ss_set}"
   else
     sbatch "${START_SCRIPT}" "${param_set}" "${lac}" "${mu}" "${K}" "${gam}" "${laa}" "${ss_set}" \
-      | tee -a "${LOG_DIR}/submitted.log"
+      | tee -a "${LOG_DIR}/resume_submitted.log"
     sleep 0.1  # small throttle to be nice to scheduler
     ((count_sub++))
   fi
@@ -63,4 +64,4 @@ shopt -u nullglob
 
 echo
 echo "[SUMMARY] checkpoint-dirs=${count_total} submitted=${count_sub} skipped=${count_skip}"
-echo "[SUMMARY] log file: ${LOG_DIR}/submitted.log"
+echo "[SUMMARY] log file: ${LOG_DIR}/resume_submitted.log"
