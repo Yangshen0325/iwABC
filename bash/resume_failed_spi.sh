@@ -14,9 +14,9 @@ lac="$1"; mu="$2"; K="$3"; gam="$4"; laa="$5"; ss_set="$6"
 dry="${7:-}"
 
 # === Paths ===
-ROOT="${HOME}/iwABC/newSimABC_spi_firstTen"       # where checkpoint dirs live now
-START_SCRIPT="${HOME}/iwABC/bash/start_ABC_spi.sh"  # script to launch/resume a single param_set
-LOG_DIR="${HOME}/iwABC/logsFirstTen"              # logs folder
+ROOT="${HOME}/iwABC/newSimABC_spi_firstTen"       # where checkpoint dirs live
+START_SCRIPT="${HOME}/iwABC/bash/start_ABC_spi.sh" # script to launch/resume a single param_set
+LOG_DIR="${HOME}/iwABC/logsFirstTen"
 mkdir -p "${LOG_DIR}"
 
 [[ -x "${START_SCRIPT}" ]] || { echo "Missing or non-executable: ${START_SCRIPT}" >&2; exit 1; }
@@ -24,18 +24,29 @@ mkdir -p "${LOG_DIR}"
 echo "[INFO] Scanning ${ROOT} for checkpoints_spi_set_XXXX/ ..."
 shopt -s nullglob
 
-count_total=0 count_sub=0 count_skip=0
-for d in "${ROOT}"/checkpoints_spi_set_*; do
+count_total=0
+count_sub=0
+count_skip=0
+
+for d in "${ROOT}"/checkpoints_spi_set_[0-9][0-9][0-9][0-9]; do
   [[ -d "$d" ]] || continue
   b=$(basename "$d")
-  [[ "$b" =~ checkpoints_spi_set_([0-9]+)$ ]] || { echo "[WARN] Skip: $d"; ((count_skip++)); continue; }
-  param_set="${BASH_REMATCH[1]}"
 
-  param_pad=$(printf "%04d" "$param_set")
-  files=( "$d"/chk_spi_set${param_pad}_iter??.rds )
+  # match strictly four digits after checkpoints_spi_set_
+  if [[ "$b" =~ ^checkpoints_spi_set_([0-9]{4})$ ]]; then
+    param_pad="${BASH_REMATCH[1]}"
+    param_set=$((10#$param_pad))   # turn 0001 -> 1
+  else
+    echo "[WARN] Skip unexpected folder name: $b"
+    ((count_skip++))
+    continue
+  fi
+
+  files=( "$d"/chk_spi_set"${param_pad}"_iter??.rds )
   if (( ${#files[@]} == 0 )); then
     echo "[WARN] No checkpoints in $d; skipping."
-    ((count_skip++)); continue
+    ((count_skip++))
+    continue
   fi
 
   max_iter=0
@@ -46,9 +57,11 @@ for d in "${ROOT}"/checkpoints_spi_set_*; do
   done
 
   ((count_total++))
+
   if (( max_iter >= 20 )); then
     echo "[OK]   set=${param_set} already at iter ${max_iter}; skip."
-    ((count_skip++)); continue
+    ((count_skip++))
+    continue
   fi
 
   echo "[RESUME] set=${param_set} latest_iter=${max_iter} → sbatch start_ABC_spi.sh ..."
@@ -56,11 +69,12 @@ for d in "${ROOT}"/checkpoints_spi_set_*; do
     echo "  sbatch ${START_SCRIPT} ${param_set} ${lac} ${mu} ${K} ${gam} ${laa} ${ss_set}"
   else
     sbatch "${START_SCRIPT}" "${param_set}" "${lac}" "${mu}" "${K}" "${gam}" "${laa}" "${ss_set}" \
-      | tee -a "${LOG_DIR}/submitted.log"
-    sleep 0.1
+      | tee -a "${LOG_DIR}/resume_submitted.log"
+    sleep 0.1   # be gentle to scheduler
     ((count_sub++))
   fi
 done
+
 shopt -u nullglob
 
 echo
