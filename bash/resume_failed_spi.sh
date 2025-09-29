@@ -14,9 +14,9 @@ lac="$1"; mu="$2"; K="$3"; gam="$4"; laa="$5"; ss_set="$6"
 dry="${7:-}"
 
 # === Paths ===
-ROOT="${HOME}/p302656/iwABC/newSimABC_spi_firstTen"       # where checkpoint dirs live now
-START_SCRIPT="${HOME}/p302656/iwABC/bash/start_ABC_spi.sh"  # script to launch/resume a single param_set
-LOG_DIR="${HOME}/p302656/iwABC/logsFirstTen"              # logs folder
+ROOT="${HOME}/iwABC/newSimABC_spi_firstTen"       # where checkpoint dirs live now
+START_SCRIPT="${HOME}/iwABC/bash/start_ABC_spi.sh"  # script to launch/resume a single param_set
+LOG_DIR="${HOME}/iwABC/logsFirstTen"              # logs folder
 mkdir -p "${LOG_DIR}"
 
 [[ -x "${START_SCRIPT}" ]] || { echo "Missing or non-executable: ${START_SCRIPT}" >&2; exit 1; }
