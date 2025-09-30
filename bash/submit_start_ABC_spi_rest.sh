@@ -27,8 +27,8 @@ ss_set="$6"
 # --- CONFIGURABLE KNOBS ---
 GROUP_SIZE=${GROUP_SIZE:-100}
 NUM_GROUPS=${NUM_GROUPS:-48}
-REPS_PER_GROUP=${REPS_PER_GROUP:-10}
-START_OFFSET=${START_OFFSET:-0}    # how many reps to skip at start of each group
+REPS_PER_GROUP=${REPS_PER_GROUP:-90}
+START_OFFSET=${START_OFFSET:-10}    # how many reps to skip at start of each group
 # --------------------------
 echo "[SPI SUBMIT] GROUP_SIZE=${GROUP_SIZE} NUM_GROUPS=${NUM_GROUPS} START_OFFSET=${START_OFFSET} REPS_PER_GROUP=${REPS_PER_GROUP}"
 
