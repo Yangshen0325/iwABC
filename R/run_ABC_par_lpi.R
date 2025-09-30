@@ -1,0 +1,130 @@
+
+#' Run ABC-SMC with DAISIE-IW data
+#' @param param_set A numeric of a specific line of parameter set in parameter space
+#' @param idparsopt A vector of positions of the parameters that be optimized.
+#' @param number_of_particles The number of particles in each iteration.
+#' @param num_iterations The maximum number of iterations.
+#' @param print_frequency The frequency of printing out the progress.
+#' @param sigma The standard deviation of the normal distribution used to generate the proposal distribution.
+#' @param stop_rate The stopping rate of the ABC-SMC algorithm (the process should stop if the success rate falls below it)
+#' @param num_threads number of threads
+
+
+
+#' @export
+run_ABC_par_lpi <- function(param_set,
+                        idparsopt,
+                        ss_set = 0,
+                        number_of_particles = 500,
+                        num_iterations = 10,
+                        print_frequency = 20,
+                        sigma = 0.05,
+                        stop_rate = 1e-7,
+                        saveOrNot = FALSE,
+                        prior_generating_function,
+                        prior_density_function,
+                        resume_from    = 0,
+                        checkpoint_path= NULL) {
+                        #start_of_file_name){
+
+  # Read corresponding parameter space and summary stats of observed data
+  param_space <- file.path("~/iwABCdata/single_pars", paste0("onlyABC_large_k_pars_", param_set, ".rds"))
+  obs_ss_data  <- file.path("~/iwABCdata/single_obs_ss", paste0("obs_ss_", param_set, ".rds"))
+
+  obs_sim_pars <- readRDS(param_space)
+  obs_sim_ss <- readRDS(obs_ss_data)
+
+  # --- Skip if observed summary stats are empty ---
+  if (nrow(obs_sim_ss) == 0) {
+    message(sprintf("Skipping param_set %d: obs summary stats are empty.", param_set))
+    return(NULL)
+  }
+
+  # set seed and print out
+  seed <- (sample.int(.Machine$integer.max, 1L) + param_set) %% .Machine$integer.max
+  if (seed == 0L) seed <- 1L
+  set.seed(seed)
+  message("Running param set: ", param_set)
+  message("seed: ", seed)
+
+  # Choose the summary statistics set
+  if(ss_set == 0){ # all
+    # init_epsilon <- c(50,   # 1 num_nonend,
+    #                   50,   # 2 num_sington,
+    #                   100,  # 3 num_multi,
+    #                   50,   # 4 nonend_nltt,
+    #                   50,   # 5 singleton_nltt,
+    #                   100,  # 6 multi_nltt,
+    #                   50,   # 7 first_clade_diff
+    #                   1,    # 8 prop_largest_clade_diff,
+    #                   10,   # 9 rank_largest_clade_diff,
+    #                   1,    # 10 clade evenness
+    #                   5,    # 11 sd_colon_time,
+    #                   50)   # 12 num_colon
+
+    # Run this when it's ABC only!!!! island age is 20, K is 100 and 1000
+    init_epsilon <- c(50,   # 1 num_nonend,
+                      50,   # 2 num_singleton,
+                      1000,  # 3 num_multi,
+                      100,   # 4 nonend_nltt,
+                      200,   # 5 singleton_nltt,
+                      15000,  # 6 multi_nltt,
+                      1000,   # 7 first_clade_diff
+                      1,    # 8 prop_largest_clade_diff,
+                      50,   # 9 rank_largest_clade_diff,
+                      1,    # 10 clade evenness
+                      50,    # 11 sd_colon_time,
+                      50)   # 12 num_colon
+  } else if (ss_set == 1){  #
+    init_epsilon <- c(200,50,50,50,50)
+  } else {
+    stop("Invalid value for ss_set. Only 0 and 1 are supported.") # will have more options in the future
+  }
+
+  if (length(init_epsilon) != length(obs_sim_ss)) {
+    stop(sprintf("Length mismatch: init_epsilon=%d vs obs_sim_ss=%d",
+                 length(init_epsilon), length(obs_sim_ss)))
+  }
+
+  # if they have names, align & warn on mismatch (optional but helpful)
+  if (!is.null(names(obs_sim_ss)) && !is.null(names(init_epsilon))) {
+    common <- intersect(names(obs_sim_ss), names(init_epsilon))
+    if (length(common) != length(obs_sim_ss)) {
+      warning("Names of obs_sim_ss and init_epsilon differ; aligning on intersection.")
+      obs_sim_ss   <- obs_sim_ss[common]
+      init_epsilon <- init_epsilon[common]
+    }
+  }
+
+  print_frequency <- max(1L, min(print_frequency, number_of_particles))
+
+  # Run ABC-SMC
+  abc <- ABC_SMC_iw_par_lpi(obs_data_ss = obs_sim_ss,
+                    init_epsilon_values = init_epsilon,
+                    prior_generating_function = prior_generating_function,
+                    prior_density_function = prior_density_function,
+                    number_of_particles = number_of_particles,
+                    print_frequency = print_frequency,
+                    sigma = sigma,
+                    sigma_decay             = 0.25,
+                    sigma_floor             = 0.02,
+                    stop_rate = stop_rate,
+                    num_iterations = num_iterations,
+                    idparsopt = idparsopt,
+                    pars = as.numeric(obs_sim_pars[1:5]),
+                    ss_set = ss_set,
+                    param_set = param_set,
+                    enable_checkpoint       = TRUE,
+                    checkpoint_dir          = file.path("newSim_lpi", sprintf("checkpoints_lpi_set_%04d", param_set)),
+                    resume_from             = resume_from,         # <- pass through a number or keep default 0
+                    checkpoint_path         = checkpoint_path )     # <- NULL normally; set if you resume from a custom file
+
+  if(saveOrNot == TRUE){
+    save_output_lpi(output = abc,
+                param_set = param_set,
+                ss_set = ss_set)
+
+  }else{
+    return(abc)
+  }
+}
