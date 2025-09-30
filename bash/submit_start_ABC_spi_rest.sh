@@ -62,8 +62,9 @@ done
 # REPS_PER_GROUP=10 sbatch bash/submit_start_ABC_spi.sh 1 2 3 4 5 0
 
 # submit the rest:
-# START_OFFSET=10 REPS_PER_GROUP=90 \
-#  sbatch submit_start_ABC_spi.sh 0.4 0 100 0.01 0.01 0
+# export START_OFFSET=10
+# export REPS_PER_GROUP=90
+# sbatch submit_start_ABC_spi.sh 1 2 3 4 5 0
 
 
 
