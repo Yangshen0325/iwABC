@@ -76,30 +76,35 @@ run_ABC_par_spi <- function(param_set,
                       50,    # 11 sd_colon_time,
                       50)   # 12 num_colon
 
-    } else if (ss_set == 1){  # Species Richness
+  } else if (ss_set == 1){  # Species Richness
+    use_obs_ss <- obs_sim_ss[c("num_nonend_sim", "num_sington_sim", "num_multi_sim")]
+    obs_sim_ss <- use_obs_ss
     init_epsilon <- c(50, # 1 num_nonend,
                       50, # 2 num_singleton,
                       1000, # 3 num_multi,
     )
-
-
-    } else if (ss_set == 2){  # NLTT
+    # phylogenetic: nltt+sd ##########
+  } else if (ss_set == 2){  # NLTT
+    use_obs_ss <- obs_sim_ss[c("nonend_nltt", "singleton_nltt", "multi_nltt")]
+    obs_sim_ss <- use_obs_ss
     init_epsilon <- c(100, #  nonend_nltt,
                       200, # singleton_nltt,
                       15000) # multi_nltt,
 
-
-    } else if(ss_set == 3){ # Clade Distribution
+  } else if(ss_set == 3){ # Clade Distribution
+    use_obs_ss <- obs_sim_ss[c("first_clade_size", "prop_largest_clade", "rank_largest_clade", "clade_evenness")]
+    obs_sim_ss <- use_obs_ss
     init_epsilon <- c(1000, #  first_clade_diff
                       1, # prop_largest_clade_diff,
                       50, #  rank_largest_clade_diff,
                       1)   # clade evenness
 
-
-     } else if(ss_set == 4){ # nltt + Colonisation Related  (phylogenetic info)
+  } else if(ss_set == 4){ # Colonisation Related + NLTT
+    use_obs_ss <- obs_sim_ss[c("nonend_nltt", "singleton_nltt", "multi_nltt", "sim_ct_sd", "num_colon")]
+    obs_sim_ss <- use_obs_ss
     init_epsilon <- c(100, #  nonend_nltt,
                       200, # singleton_nltt,
-                      1000, # 3 num_multi,
+                      15000, # multi_nltt,
                       50, # sd_colon_time,
                       50) # num_colon
 
