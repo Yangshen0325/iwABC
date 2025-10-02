@@ -75,8 +75,31 @@ run_ABC_par_lpi <- function(param_set,
                       1,    # 10 clade evenness
                       50,    # 11 sd_colon_time,
                       50)   # 12 num_colon
-  } else if (ss_set == 1){  #
-    init_epsilon <- c(200,50,50,50,50)
+
+     } else if (ss_set == 1){  # Species Richness
+    init_epsilon <- c(50, # 1 num_nonend,
+                      50, # 2 num_singleton,
+                      1000, # 3 num_multi,
+                      )
+# phylogenetic: nltt+sd ##########
+    } else if (ss_set == 2){  # NLTT
+    init_epsilon <- c(100, #  nonend_nltt,
+                      200, # singleton_nltt,
+                      15000) # multi_nltt,
+
+    } else if(ss_set == 3){ # Clade Distribution
+      init_epsilon <- c(1000, #  first_clade_diff
+                        1, # prop_largest_clade_diff,
+                        50, #  rank_largest_clade_diff,
+                        1)   # clade evenness
+
+    } else if(ss_set == 4){ # Colonisation Related + NLTT
+      init_epsilon <- c(100, #  nonend_nltt,
+                        200, # singleton_nltt,
+                        15000, # multi_nltt,
+                        50, # sd_colon_time,
+                        50) # num_colon
+
   } else {
     stop("Invalid value for ss_set. Only 0 and 1 are supported.") # will have more options in the future
   }

@@ -46,7 +46,7 @@ for (( g=0; g<NUM_GROUPS; g++ )); do
     fi
     param_set=$(( base + rep ))            # <-- use rep here
     echo "Submitting job for parameter set ${param_set} (group $((g+1)) rep ${rep})..."
-    sbatch ~/iwABC/bash/start_ABC_spi.sh \
+    sbatch ~/iwABC/bash/spi_ABC/start_ABC_spi.sh \
            "${param_set}" \
            "${idparsopt_lac}" \
            "${idparsopt_mu}" \
