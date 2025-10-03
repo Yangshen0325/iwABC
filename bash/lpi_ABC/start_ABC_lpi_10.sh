@@ -1,11 +1,11 @@
 #!/bin/bash
-#SBATCH --time=4-00:00:00
+#SBATCH --time=2-00:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1      #
 #SBATCH --job-name=ABC_lpi_10
 #SBATCH --output=logs_lpi_firstTen/ABC_lpi_10-%j.log
-#SBATCH --mem=30GB
+#SBATCH --mem=10GB
 #SBATCH --partition=regular
 
 # Ensure log directory exists (avoids 'No such file or directory' on some systems)
