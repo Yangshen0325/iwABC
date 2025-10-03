@@ -81,7 +81,7 @@ run_ABC_par_lpi <- function(param_set,
        obs_sim_ss <- use_obs_ss
        init_epsilon <- c(50, # 1 num_nonend,
                       50, # 2 num_singleton,
-                      1000, # 3 num_multi,
+                      1000 # 3 num_multi,
                       )
 # phylogenetic: nltt+sd ##########
     } else if (ss_set == 2){  # NLTT
