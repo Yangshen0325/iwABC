@@ -49,20 +49,6 @@ run_ABC_par_spi <- function(param_set,
 
   # Choose the summary statistics set
   if(ss_set == 0){ # all
-    # init_epsilon <- c(50,   # 1 num_nonend,
-    #                   50,   # 2 num_sington,
-    #                   100,  # 3 num_multi,
-    #                   50,   # 4 nonend_nltt,
-    #                   50,   # 5 singleton_nltt,
-    #                   100,  # 6 multi_nltt,
-    #                   50,   # 7 first_clade_diff
-    #                   1,    # 8 prop_largest_clade_diff,
-    #                   10,   # 9 rank_largest_clade_diff,
-    #                   1,    # 10 clade evenness
-    #                   5,    # 11 sd_colon_time,
-    #                   50)   # 12 num_colon
-
-    # Run this when it's ABC only!!!! island age is 20, K is 100 and 1000
     init_epsilon <- c(50,   # 1 num_nonend,
                       50,   # 2 num_singleton,
                       1000,  # 3 num_multi,
@@ -115,16 +101,6 @@ run_ABC_par_spi <- function(param_set,
   if (length(init_epsilon) != length(obs_sim_ss)) {
     stop(sprintf("Length mismatch: init_epsilon=%d vs obs_sim_ss=%d",
                  length(init_epsilon), length(obs_sim_ss)))
-  }
-
-  # if they have names, align & warn on mismatch (optional but helpful)
-  if (!is.null(names(obs_sim_ss)) && !is.null(names(init_epsilon))) {
-    common <- intersect(names(obs_sim_ss), names(init_epsilon))
-    if (length(common) != length(obs_sim_ss)) {
-      warning("Names of obs_sim_ss and init_epsilon differ; aligning on intersection.")
-      obs_sim_ss   <- obs_sim_ss[common]
-      init_epsilon <- init_epsilon[common]
-    }
   }
 
   print_frequency <- max(1L, min(print_frequency, number_of_particles))
