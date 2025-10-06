@@ -355,7 +355,31 @@ process_particle <- function(par_values,
 
 
   # Calculate the summary statistics for the simulated tree
-  new_sim_ss <- calc_all_stats(sim = new_sim[[1]])
+  new_sim_ss_all <- calc_all_stats(sim = new_sim[[1]])
+
+  if (ss_set == 0) {            # All
+    new_sim_ss <- new_sim_ss_all
+
+  } else if (ss_set == 1) {     # Species richness
+    new_sim_ss <- new_sim_ss_all[c("num_nonend_sim", "num_sington_sim", "num_multi_sim")]
+
+  } else if (ss_set == 2) {     # NLTT
+    new_sim_ss <- new_sim_ss_all[c("nonend_nltt", "singleton_nltt", "multi_nltt")]
+
+  } else if (ss_set == 3) {     # Clade distribution
+    new_sim_ss <- new_sim_ss_all[c("first_clade_size",
+                               "prop_largest_clade",
+                               "rank_largest_clade",
+                               "clade_evenness")]
+
+  } else if (ss_set == 4) {     # Colonisation + NLTT
+    new_sim_ss <- new_sim_ss_all[c("nonend_nltt", "singleton_nltt", "multi_nltt",
+                               "sim_ct_sd", "num_colon")]
+
+  } else {
+    stop("Invalid value for ss_set. Only 0–4 are supported.")
+  }
+
   df_stats <- unlist(abs(new_sim_ss - obs_data_ss))
 
   accept <- TRUE
