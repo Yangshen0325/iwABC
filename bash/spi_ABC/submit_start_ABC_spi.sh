@@ -2,9 +2,9 @@
 #SBATCH --time=0:29:30
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --job-name=start_ABC_spi
+#SBATCH --job-name=ABC_spi_f10
 #SBATCH --output=logsFirstTen/start_ABC_spi-%j.log
-#SBATCH --mem=5GB
+#SBATCH --mem=1GB
 #SBATCH --partition=regular
 #SBATCH --export=ALL   # <-- ensure env vars like START_OFFSET pass through
 
@@ -58,8 +58,6 @@ for (( g=0; g<NUM_GROUPS; g++ )); do
 done
 
 
-# If test for the first 10, then on cluster you can run:
-# REPS_PER_GROUP=10 sbatch bash/submit_start_ABC_spi.sh 1 2 3 4 5 0
 
 
 

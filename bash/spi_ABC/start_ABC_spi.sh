@@ -3,7 +3,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1      #
-#SBATCH --job-name=job_run_ABC_spi
+#SBATCH --job-name=run_ABC_spi_f10
 #SBATCH --output=logsFirstTen/ABC_spi-%j.log
 #SBATCH --mem=20GB
 #SBATCH --partition=regular
