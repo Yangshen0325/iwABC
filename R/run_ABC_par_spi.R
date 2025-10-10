@@ -31,6 +31,9 @@ run_ABC_par_spi <- function(param_set,
   param_space <- file.path("~/iwABCdata/single_pars_spi", paste0("ABC_pars_spi_", param_set, ".rds"))
   obs_ss_data  <- file.path("~/iwABCdata/single_obs_ss_spi", paste0("obs_ss_spi_", param_set, ".rds"))
 
+  #param_space <- file.path("~/Downloads/phd_yang/pkgs/iwABC/data/single_pars_spi", paste0("ABC_pars_spi_", param_set, ".rds"))
+  #obs_ss_data  <- file.path("~/Downloads/phd_yang/pkgs/iwABC/data/single_obs_ss_spi", paste0("obs_ss_spi_", param_set, ".rds"))
+
   obs_sim_pars <- readRDS(param_space)
   obs_sim_ss <- readRDS(obs_ss_data)
 
