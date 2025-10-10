@@ -15,7 +15,7 @@ OUTDIR=~/iwABC/bash/spi_ABC/newSimABC_spi_firstTen
 SCRIPT=~/iwABC/bash/spi_ABC/start_ABC_spi.sh
 
 START_ID=1
-END_ID=5
+END_ID=100
 
 # Parameter values
 idparsopt_lac="$1"
