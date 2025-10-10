@@ -2,7 +2,7 @@
 # This script checks checkpoints for each param_set and resubmits jobs if incomplete.
 
 # Base directory containing all checkpoint folders
-BASE_DIR=~/iwABC/bash/newSimABC_spi_firstTen
+BASE_DIR=~/iwABC/bash/spi_ABC/newSimABC_spi_firstTen
 
 # Loop over all checkpoint folders
 for folder in "$BASE_DIR"/checkpoints_spi_set_*; do
@@ -21,6 +21,6 @@ for folder in "$BASE_DIR"/checkpoints_spi_set_*; do
 
         # Submit job (adjust arguments as you need)
         # Example: sbatch bash/start_ABC_spi.sh <param_set> 1 2 3 4 5 0
-        sbatch bash/spi_ABC/start_ABC_spi_rest.sh "$param_set" 1 2 3 4 5 0
+        sbatch bash/spi_ABC/start_ABC_spi_rest.sh "$param_set" 1 2 3 4 5 1
     fi
 done
