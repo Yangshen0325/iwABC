@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=SPI_master_submit
 #SBATCH --output=logsMaster/sbatch_master_submit-%j.log
-#SBATCH --time=00:30:00
+#SBATCH --time=4-00:00:00
 #SBATCH --partition=regular
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
@@ -12,12 +12,12 @@ set -u
 
 # ------------------ USER CONFIGURABLE KNOBS ------------------
 # Chunking: how many submissions per batch and sleep between batches
-CHUNK_SIZE=${CHUNK_SIZE:-20}           # submit this many jobs per batch
-SLEEP_BETWEEN=${SLEEP_BETWEEN:-15m}      # sleep time between batches (e.g., "1h" or "3600")
+CHUNK_SIZE=${CHUNK_SIZE:-100}           # submit this many jobs per batch
+SLEEP_BETWEEN=${SLEEP_BETWEEN:-1h}      # sleep time between batches (e.g., "1h" or "3600")
 
 # Range of param_set to iterate
 START_SET=${START_SET:-1}
-END_SET=${END_SET:-20}
+END_SET=${END_SET:-4800}
 
 # Paths
 RUNNER=~/iwABC/bash/spi_ABC/start_ABC_spi.sh
