@@ -8,7 +8,7 @@
 #SBATCH --mem=100M
 #SBATCH --export=ALL
 
-set -euo pipefail
+set -u
 
 # ------------------ USER CONFIGURABLE KNOBS ------------------
 # Chunking: how many submissions per batch and sleep between batches
@@ -82,6 +82,7 @@ for (( param_set=${START_SET}; param_set<=${END_SET}; param_set++ )); do
   # 1) Skip if final output exists
   if output_exists "${param_set}" "${ss_set}"; then
     echo "[SKIP] param_set=${param_set} → final output exists: ${OUT_DIR}/param_set_${param_set}_ss_${ss_set}.rds"
+    echo "[DEBUG] Moving to next param_set..."
     ((total_skipped++))
     continue
   fi
