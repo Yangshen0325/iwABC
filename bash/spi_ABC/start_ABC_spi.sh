@@ -1,11 +1,11 @@
 #!/bin/bash
-#SBATCH --time=4-00:00:00
+#SBATCH --time=12:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1      #
 #SBATCH --job-name=run_ABC_spi_f10
 #SBATCH --output=logsFirstTen/ABC_spi-%j.log
-#SBATCH --mem=25G
+#SBATCH --mem=1G
 #SBATCH --partition=regular
 
 # Ensure log directory exists (avoids 'No such file or directory' on some systems)
