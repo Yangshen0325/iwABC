@@ -12,8 +12,8 @@ set -u
 
 # ------------------ USER CONFIGURABLE KNOBS ------------------
 # Chunking: how many submissions per batch and sleep between batches
-CHUNK_SIZE=${CHUNK_SIZE:-100}           # submit this many jobs per batch
-SLEEP_BETWEEN=${SLEEP_BETWEEN:-1h}      # sleep time between batches (e.g., "1h" or "3600")
+CHUNK_SIZE=${CHUNK_SIZE:-10}           # submit this many jobs per batch
+SLEEP_BETWEEN=${SLEEP_BETWEEN:-20m}      # sleep time between batches (e.g., "1h" or "3600")
 
 # Range of param_set to iterate
 START_SET=${START_SET:-1}
