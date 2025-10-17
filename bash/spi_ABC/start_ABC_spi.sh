@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task=1      #
 #SBATCH --job-name=run_ABC_spi_f10
 #SBATCH --output=logsFirstTen/ABC_spi-%j.log
-#SBATCH --mem=1G
+#SBATCH --mem=5G
 #SBATCH --partition=regular
 
 # Ensure log directory exists (avoids 'No such file or directory' on some systems)
