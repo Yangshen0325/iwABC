@@ -261,7 +261,7 @@ ABC_SMC_iw_par_spi <- function(
       # Clean up the memory
       parameter_list <- NULL
       res <- NULL
-      gc()
+      if ((tried %% 100) == 0L) gc()
     }
 
 
@@ -353,9 +353,11 @@ process_particle <- function(par_values,
     rcpp = TRUE
   )
 
+ the_sim <- new_sim[[1]]
+ rm(new_sim)
+ # Calculate the summary statistics for the simulated tree
+ new_sim_ss_all <- calc_all_stats(sim = the_sim)
 
-  # Calculate the summary statistics for the simulated tree
-  new_sim_ss_all <- calc_all_stats(sim = new_sim[[1]])
 
   if (ss_set == 0) {            # All
     new_sim_ss <- new_sim_ss_all
