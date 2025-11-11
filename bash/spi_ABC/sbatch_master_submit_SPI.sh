@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=SPI_master_submit
-#SBATCH --output=logsMaster/ys_sbatch_master_submit-%j.log
+#SBATCH --output=logsMaster/yl_sbatch_master_submit-%j.log
 #SBATCH --time=20:00:00
 #SBATCH --partition=regular
 #SBATCH --nodes=1
@@ -16,8 +16,8 @@ CHUNK_SIZE=${CHUNK_SIZE:-20}           # submit this many jobs per batch
 SLEEP_BETWEEN=${SLEEP_BETWEEN:-20m}      # sleep time between batches (e.g., "1h" or "3600")
 
 # Range of param_set to iterate
-START_SET=${START_SET:-1}
-END_SET=${END_SET:-1000}
+START_SET=${START_SET:-1001}
+END_SET=${END_SET:-2000}
 
 # Paths
 RUNNER=~/iwABC/bash/spi_ABC/start_ABC_spi.sh

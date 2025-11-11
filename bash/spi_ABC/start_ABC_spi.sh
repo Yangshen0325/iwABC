@@ -1,10 +1,10 @@
 #!/bin/bash
-#SBATCH --time=3-20:00:00
+#SBATCH --time=4-00:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1      #
-#SBATCH --job-name=ys_run_ABC_spi
-#SBATCH --output=logsFirstTen/ys_ABC_spi-%j.log
+#SBATCH --job-name=yl_run_ABC_spi
+#SBATCH --output=logsFirstTen/yl_ABC_spi-%j.log
 #SBATCH --mem=25G
 #SBATCH --partition=regular
 
