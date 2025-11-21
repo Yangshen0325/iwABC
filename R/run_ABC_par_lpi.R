@@ -28,8 +28,8 @@ run_ABC_par_lpi <- function(param_set,
                         #start_of_file_name){
 
   # Read corresponding parameter space and summary stats of observed data
-  param_space <- file.path("~/iwABCdata/single_pars", paste0("onlyABC_large_k_pars_", param_set, ".rds"))
-  obs_ss_data  <- file.path("~/iwABCdata/single_obs_ss", paste0("obs_ss_", param_set, ".rds"))
+  param_space <- file.path("~/iwABCdata/lpi_pars_10reps", paste0("ABC_pars_lpi_", param_set, ".rds"))
+  obs_ss_data  <- file.path("~/iwABCdata/lpi_obs_ss_10reps", paste0("obs_ss_lpi_", param_set, ".rds"))
 
   obs_sim_pars <- readRDS(param_space)
   obs_sim_ss <- readRDS(obs_ss_data)
@@ -146,7 +146,7 @@ run_ABC_par_lpi <- function(param_set,
                     ss_set = ss_set,
                     param_set = param_set,
                     enable_checkpoint       = TRUE,
-                    checkpoint_dir          = file.path("newSim_lpi", sprintf("checkpoints_lpi_set_%04d", param_set)),
+                    checkpoint_dir          = file.path("newSimABC_lpi_firstTen", sprintf("checkpoints_lpi_set_%04d", param_set)),
                     resume_from             = resume_from,         # <- pass through a number or keep default 0
                     checkpoint_path         = checkpoint_path )     # <- NULL normally; set if you resume from a custom file
 
