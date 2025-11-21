@@ -14,7 +14,7 @@ idparsopt_laa <- as.numeric(args[6])
 ss_set <- as.numeric(args[7])
 
 ## --- Auto-detect latest checkpoint for this param_set ---
-checkpoint_dir  <- file.path("newSim_lpi", sprintf("checkpoints_lpi_set_%04d", param_set))
+checkpoint_dir  <- file.path("newSimABC_lpi_firstTen", sprintf("checkpoints_lpi_set_%04d", param_set))
 resume_from     <- 0
 checkpoint_path <- NULL
 
@@ -37,9 +37,8 @@ if (dir.exists(checkpoint_dir)) {
   message("[AUTO-RESUME] No checkpoint dir; starting from iter 1.")
 }
 
-idparsopt_all <- c(idparsopt_lac, idparsopt_mu, idparsopt_K, idparsopt_gam, idparsopt_laa)
 
-idparsopt <- idparsopt_all #which(idparsopt_all == 1)
+idparsopt <- c(idparsopt_lac, idparsopt_mu, idparsopt_K, idparsopt_gam, idparsopt_laa)
 
 if (length(idparsopt) == 0) {
   stop("No parameters selected to optimize (all flags were 0).")
