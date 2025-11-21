@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task=1      #
 #SBATCH --job-name=ys_run_ABC_lpi
 #SBATCH --output=logsFirstTen/ys_run_ABC_lpi-%j.log
-#SBATCH --mem=10GB
+#SBATCH --mem=20GB
 #SBATCH --partition=regular
 
 # Ensure log directory exists (avoids 'No such file or directory' on some systems)
