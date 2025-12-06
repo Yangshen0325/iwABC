@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Base directory where all checkpoint folders live
-BASE_DIR=~/iwABC/newSimABC_spi_firstTen
+BASE_DIR=~/iwABC/bash/spi_ABC/newSimABC_spi_firstTen
 
 # Output directory to store the last-iteration RDS files
 OUT_DIR="$BASE_DIR/last_iter_results"
