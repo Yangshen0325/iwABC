@@ -3,9 +3,9 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1      #
-#SBATCH --job-name=tt_run_ABC_spi
-#SBATCH --output=logsFirstTen/tt_ABC_spi-%j.log
-#SBATCH --mem=60G
+#SBATCH --job-name=tj_run_ABC_spi
+#SBATCH --output=logsFirstTen/tj_ABC_spi-%j.log
+#SBATCH --mem=30G
 #SBATCH --partition=regular
 
 # Ensure log directory exists (avoids 'No such file or directory' on some systems)
