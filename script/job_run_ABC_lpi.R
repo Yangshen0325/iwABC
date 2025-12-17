@@ -55,7 +55,7 @@ iwABC::run_ABC_par_lpi(
   saveOrNot = saveOrNot,
   ss_set = ss_set,
   number_of_particles = 500,
-  num_iterations = 20,
+  num_iterations = 15,
   stop_rate = 1e-7,
 
   # prior functions
