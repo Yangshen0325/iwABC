@@ -25,7 +25,7 @@ OUT_DIR=~/iwABC/bash/lpi_ABC/outNewSimABC_lpi
 CHK_ROOT=~/iwABC/bash/lpi_ABC/newSimABC_lpi_firstTen
 
 # ------------------ ARGUMENTS ------------------
-# Usage: sbatch sbatch_master_submit_SPI.sh <lac> <mu> <K> <gam> <laa> <ss_set>
+# Usage: sbatch sbatch_master_submit_LPI.sh <lac> <mu> <K> <gam> <laa> <ss_set>
 if [ $# -ne 6 ]; then
   echo "Usage: sbatch $(basename "$0") <lac> <mu> <K> <gam> <laa> <ss_set>" >&2
   exit 1
