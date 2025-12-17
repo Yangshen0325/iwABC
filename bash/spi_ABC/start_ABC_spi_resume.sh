@@ -33,6 +33,7 @@ ss_set="$6"
 
 # ------------------ PREP ------------------
 mkdir -p logsMaster
+module load R-bundle-CRAN/2023.12-foss-2023a
 
 echo "[MASTER] Starting master submission controller"
 echo "[MASTER] Runner: ${RUNNER}"
