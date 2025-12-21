@@ -35,7 +35,7 @@ module load R-bundle-CRAN/2023.12-foss-2023a
 
 echo "[MASTER] start script: $START_SCRIPT"
 echo "[MASTER] param_set_list: $PARAM_SET_LIST_RDS"
-echo "[MASTER] args: lac=$lac mu=$mu K=$K gam=$gam laa=$laa ss_set=$ss_set"
+echo "[MASTER] args: lac=$idparsopt_lac mu=$idparsopt_mu K=$idparsopt_K gam=$idparsopt_gam laa=$idparsopt_laa ss_set=$ss_set"
 echo
 
 # ------------------ PREP ------------------
