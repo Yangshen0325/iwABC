@@ -5,7 +5,7 @@
 #SBATCH --partition=regular
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --mem=100M
+#SBATCH --mem=5G
 #SBATCH --export=ALL
 
 set -euo pipefail
