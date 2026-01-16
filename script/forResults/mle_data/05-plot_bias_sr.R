@@ -57,14 +57,16 @@ combined_diff_total <- readRDS("script/forResults/mle_data/diff_richness.rds")
 
 cutoff <- 7
 lac_noodd <- combined_diff_total %>%
-  select(param_set, lac_MLE, lac, diff_lac, total_sp) %>%
+  select(param_set, lac, lac_MLE, diff_lac, total_sp) %>%
   mutate(
-    is_extreme = abs(diff_lac) > cutoff * lac | !is.finite(lac_MLE), # if the estimates over 6 times of true
+    lac_f = factor(lac, labels = c("lambda^c == 0.4", "lambda^c == 0.7")),
+    is_extreme = abs(diff_lac) > cutoff * lac | !is.finite(lac_MLE),
     lac_diff_plot = ifelse(is_extreme, NA_real_, diff_lac),
     total_sp_plot = ifelse(is_extreme, NA_real_, total_sp)
   )
 
-p_bias_sr <- ggplot(lac_noodd, aes(x = total_sp_plot, y = abs(lac_diff_plot))) +
+p_bias_sr <- ggplot(lac_noodd,
+                    aes(x = total_sp_plot, y = abs(lac_diff_plot), color = lac_f)) +
   geom_hline(yintercept = 0,
              linewidth = 0.4,
              linetype = "dashed",
@@ -78,6 +80,10 @@ p_bias_sr <- ggplot(lac_noodd, aes(x = total_sp_plot, y = abs(lac_diff_plot))) +
   #             se = TRUE,
   #             colour = "black",
   #             fill   = "grey80") +
+  scale_colour_manual(
+    values = c("#1B9E77", "#D95F02"),
+    name   = expression("True " * lambda^c)
+  ) +
   labs(
     x = "Species richness",
     # y-axis using "delta lambda^c" to represent bias
@@ -100,11 +106,13 @@ cutoff <- 1.0
 mu_noodd <- combined_diff_total %>%
   select(param_set, mu_MLE, mu, diff_mu, total_sp) %>%
   mutate(
+    mu_f = factor(mu, labels = c("mu == 0", "mu == 0.3")),
     is_extreme = abs(diff_mu) > cutoff | !is.finite(mu_MLE), # if the estimates over 6 times of true
     mu_diff_plot = ifelse(is_extreme, NA_real_, diff_mu),
     total_sp_plot = ifelse(is_extreme, NA_real_, total_sp)
   )
-p_bias_sr_mu <- ggplot(mu_noodd, aes(x = total_sp_plot, y = abs(mu_diff_plot))) +
+p_bias_sr_mu <- ggplot(mu_noodd,
+                       aes(x = total_sp_plot, y = abs(mu_diff_plot), color = mu_f)) +
   geom_hline(yintercept = 0,
              linewidth = 0.4,
              linetype = "dashed",
@@ -118,6 +126,10 @@ p_bias_sr_mu <- ggplot(mu_noodd, aes(x = total_sp_plot, y = abs(mu_diff_plot))) 
   #             se = TRUE,
   #             colour = "black",
   #             fill   = "grey80") +
+  scale_colour_manual(
+    values = c("#1B9E77", "#D95F02"),
+    name   = expression("True " * mu)
+  ) +
   labs(
     x = "Species richness",
     # y-axis using "delta mu" to represent bias
@@ -137,11 +149,13 @@ cutoff <- 1.5
 K_noodd <- combined_diff_total %>%
   select(param_set, K_MLE, K, diff_K, total_sp) %>%
   mutate(
+    K_f = factor(K, labels = c("K == 20", "K == 50", "K == 100")),
     is_extreme = abs(diff_K) > cutoff *K | !is.finite(K_MLE), # if the estimates over 6 times of true
     K_diff_plot = ifelse(is_extreme, NA_real_, diff_K),
     total_sp_plot = ifelse(is_extreme, NA_real_, total_sp)
   )
-p_bias_sr_K <- ggplot(K_noodd, aes(x = total_sp_plot, y = abs(K_diff_plot))) +
+p_bias_sr_K <- ggplot(K_noodd,
+                      aes(x = total_sp_plot, y = abs(K_diff_plot), color=K_f)) +
   geom_hline(yintercept = 0,
              linewidth = 0.4,
              linetype = "dashed",
@@ -155,6 +169,10 @@ p_bias_sr_K <- ggplot(K_noodd, aes(x = total_sp_plot, y = abs(K_diff_plot))) +
   #             se = TRUE,
   #             colour = "black",
   #             fill   = "grey80") +
+  scale_colour_manual(
+    values = c("#1B9E77", "#D95F02", 	"#7570B3" ),
+    name   = expression("True " * K)
+  ) +
   labs(
     x = "Species richness",
     # y-axis using "delta K" to represent bias
@@ -174,11 +192,13 @@ cutoff <- 7
 gam_noodd <- combined_diff_total %>%
   select(param_set, gam_MLE, gam, diff_gam, total_sp) %>%
   mutate(
+    gam_f = factor(gam, labels = c("gamma == 0.001", "gamma == 0.002")),
     is_extreme = abs(diff_gam) > cutoff * gam | !is.finite(gam_MLE), # if the estimates over 6 times of true
     gam_diff_plot = ifelse(is_extreme, NA_real_, diff_gam),
     total_sp_plot = ifelse(is_extreme, NA_real_, total_sp)
   )
-p_bias_sr_gam <- ggplot(gam_noodd, aes(x = total_sp_plot, y = abs(gam_diff_plot))) +
+p_bias_sr_gam <- ggplot(gam_noodd,
+                        aes(x = total_sp_plot, y = abs(gam_diff_plot), color = gam_f)) +
   geom_hline(yintercept = 0,
              linewidth = 0.4,
              linetype = "dashed",
@@ -192,6 +212,10 @@ p_bias_sr_gam <- ggplot(gam_noodd, aes(x = total_sp_plot, y = abs(gam_diff_plot)
   #             se = TRUE,
   #             colour = "black",
   #             fill   = "grey80") +
+  scale_colour_manual(
+    values = c("#1B9E77", "#D95F02"),
+    name   = expression("True " * gamma)
+  ) +
   labs(
     x = "Species richness",
     # y-axis using "delta gam" to represent bias
@@ -211,11 +235,13 @@ cutoff <- 6
 laa_noodd <- combined_diff_total %>%
   select(param_set, laa_MLE, laa, diff_laa, total_sp) %>%
   mutate(
+    laa_f = factor(laa, labels = c("lambda^a == 0.1", "lambda^a == 1.0")),
     is_extreme = abs(diff_laa) > cutoff * laa | !is.finite(laa_MLE), # if the estimates over 6 times of true
     laa_diff_plot = ifelse(is_extreme, NA_real_, diff_laa),
     total_sp_plot = ifelse(is_extreme, NA_real_, total_sp)
   )
-p_bias_sr_laa <- ggplot(laa_noodd, aes(x = total_sp_plot, y = abs(laa_diff_plot))) +
+p_bias_sr_laa <- ggplot(laa_noodd,
+                        aes(x = total_sp_plot, y = abs(laa_diff_plot), color = laa_f)) +
   geom_hline(yintercept = 0,
              linewidth = 0.4,
              linetype = "dashed",
@@ -229,6 +255,10 @@ p_bias_sr_laa <- ggplot(laa_noodd, aes(x = total_sp_plot, y = abs(laa_diff_plot)
   #             se = TRUE,
   #             colour = "black",
   #             fill   = "grey80") +
+  scale_colour_manual(
+    values = c("#1B9E77", "#D95F02"),
+    name   = expression("True " * lambda^a)
+  ) +
   labs(
     x = "Species richness",
     # y-axis using "delta laa" to represent bias
