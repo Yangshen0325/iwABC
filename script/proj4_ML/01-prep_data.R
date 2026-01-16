@@ -1,7 +1,12 @@
 
 
 
-# Get true parameters, MLE results and all ABC results
+# Get true parameters, MLE results and all ABC results. Don't run, data saved.
+# `ml_df`: 4800 * 19 with `param_set`, `rep_id`, 12 SPI stats, 5 true parameters.
+# `true_params`: 4800 * 7 with `param_set`, `rep_id`, 5 true parameters (lac_true, etc.).
+# `all_estimates`: 19200 * 8 with `param_set`, `rep_id`, `method` ("MLE","ABC_SR","ABC_NLTT","ABC_CD"),
+#  5 estimated parameters (lac_est, etc.).
+
 
 library(dplyr)
 library(tidyr)
