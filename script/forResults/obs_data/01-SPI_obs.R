@@ -60,8 +60,10 @@ spi_obs_long <- spi_obs %>%
     Scenario,
     total_species,
     num_colon,
-    clade_evenness,
-    prop_largest_clade
+    first_clade_size,
+    prop_largest_clade,
+    rank_largest_clade,
+    clade_evenness
   ) %>%
   pivot_longer(
     cols      = -Scenario,
@@ -71,32 +73,71 @@ spi_obs_long <- spi_obs %>%
   mutate(
     statistic = factor(
       statistic,
-      levels = c("total_species", "num_colon",
-                 "prop_largest_clade", "clade_evenness"),
-      labels = c("Total species richness",
-                 "Number of colonisations",
-                 "Proportion of largest clade",
-                 "Clade evenness")
+      levels = c("total_species", "num_colon", "rank_largest_clade",
+                 "first_clade_size", "prop_largest_clade", "clade_evenness"),
+      labels = c(
+        "(a) Species richness",
+        "(b) Number of clades",
+        "(c) Rank of largest clade",
+        "(d) Size of first clade",
+        "(e) Proportion of largest clade",
+        "(f) Clade evenness"
+      )
     )
   )
 
-p_spi_obs <- ggplot(spi_obs_long, aes(x = Scenario, y = value)) +
-  geom_boxplot(outlier.size = 0.5, alpha = 0.8, na.rm = TRUE) +
-  facet_wrap(~ statistic, scales = "free_y", ncol = 2) +
+p_spi_obs <- ggplot(
+  spi_obs_long,
+  aes(x = Scenario, y = value, fill = statistic)
+) +
+  geom_boxplot(
+    outlier.size = 0.4,
+    linewidth    = 0.4,
+    alpha        = 0.85,
+    na.rm        = TRUE
+  ) +
+  facet_wrap(
+    ~ statistic,
+    scales = "free_y",
+    ncol   = 3
+  ) +
+  scale_fill_brewer(
+    palette = "Set2",
+    guide   = "none"   # colour helps visually but legend not needed
+  ) +
   theme_bw(base_size = 12) +
   theme(
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor   = element_blank(),
+
     axis.text.x  = element_blank(),
     axis.ticks.x = element_blank(),
-    strip.background = element_rect(colour = "grey70"),
-    legend.position  = "none"
+
+    strip.background = element_rect(
+      fill   = "grey92",
+      colour = "grey50",
+      linewidth = 0.5
+    ),
+    strip.text = element_text(face = "bold"),
+
+    panel.spacing = unit(1.1, "lines")
   ) +
   labs(
-    x = "Parameter combination (Scenarios 1–48)",
+    x = "Parameter Set",
     y = NULL
   )
 
 p_spi_obs
 
+ggsave(
+  "script/forResults/obs_data/SPI_observed_stats_boxes.pdf",
+  plot   = p_spi_obs,
+  width    = 8,   # adjust if needed
+  height   = 4,    # adjust if needed
+  units    = "in",
+  device   = cairo_pdf,   # ensures proper embedding of fonts
+  dpi    = 300
+)
 
 
 # Aggregate sets, compare between params ----------------------------------
