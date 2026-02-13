@@ -155,7 +155,8 @@ run_ABC_par_lpi <- function(param_set,
                 param_set = param_set,
                 ss_set = ss_set)
 
-  }else{
-    return(abc)
   }
+  # else{
+  #   return(abc)
+  # }
 }
