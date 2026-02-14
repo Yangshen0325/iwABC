@@ -119,7 +119,7 @@ abc_true_bias <- abc_true_df %>%
     bias_K   = abs(K_ABC - K),
     bias_gam  = abs(gam_ABC - gam),
     bias_laa  = abs(laa_ABC - laa),
-    bias_netdiv = bias_lac - bias_mu
+    bias_netdiv = abs(lac_ABC - mu_ABC)
   )
 saveRDS(abc_true_bias, "script/forResults/ABC_data/abc_true_bias_ss1.rds")
 
